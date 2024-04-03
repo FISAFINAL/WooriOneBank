@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Builder
 @ToString
-public class MemberDTO { //
+public class MemberDTO {
     private Long memberId;
 
     private String id;
@@ -32,5 +32,8 @@ public class MemberDTO { //
 
     private List<Account> accounts;
 
-    
+    private String token;
+
+    private Boolean isVerified; // 아이디 중복 체크
+
 }

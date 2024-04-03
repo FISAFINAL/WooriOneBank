@@ -5,6 +5,7 @@ import com.fisa.woorionebank.config.BaseEntity;
 import com.fisa.woorionebank.member.domain.dto.MemberDTO;
 import com.fisa.woorionebank.saving.entity.Saving;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Table(name = "member")
 @Entity
