@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Table(name = "account")
 @Entity
 public class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "account_id")
