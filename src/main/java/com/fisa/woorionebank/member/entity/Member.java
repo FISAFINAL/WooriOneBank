@@ -1,7 +1,7 @@
 package com.fisa.woorionebank.member.entity;
 
 import com.fisa.woorionebank.account.entity.Account;
-import com.fisa.woorionebank.config.BaseEntity;
+import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.member.domain.dto.MemberDTO;
 import com.fisa.woorionebank.saving.entity.Saving;
 import lombok.AllArgsConstructor;

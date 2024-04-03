@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.config;
+package com.fisa.woorionebank.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity {
+public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false, columnDefinition = "datetime default CURRENT_TIMESTAMP NOT NULL COMMENT '생성일자'")
@@ -25,4 +25,11 @@ public class BaseEntity {
     @LastModifiedDate
     @Column(columnDefinition = "datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL COMMENT '수정일자'")
     private LocalDateTime modifiedTime;
+
+    @Column(columnDefinition = "bit default false NOT NULL COMMENT '이용가능여부'")
+    private Boolean isDeleted;
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
