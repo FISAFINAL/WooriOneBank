@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Builder
 @ToString
-public class MemberDTO {
+public class MemberDTO { //
     private Long memberId;
 
     private String id;
