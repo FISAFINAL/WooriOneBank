@@ -28,9 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
-
     private final TokenProvider tokenProvider;
-
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @PostMapping(value = "/user")
@@ -41,10 +39,12 @@ public class MemberController {
         return Header.description(memberService.createMember(memberDTO), "유저 저장 완료");
     }
 
+    /**
+     * 회원가입
+     * */
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody MemberDTO memberDTO) {
         try {
-
             Member member = Member.builder()
                     .memberId(memberDTO.getMemberId())
                     .loginId(memberDTO.getId())
@@ -62,11 +62,14 @@ public class MemberController {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
 
             return ResponseEntity
-                    .internalServerError() // Error 500
+                    .internalServerError()
                     .body(responseDTO);
         }
     }
 
+    /**
+     * 로그인
+     * */
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody MemberDTO memberDTO) {
         Member member = memberService.getByCredentials(
@@ -75,7 +78,6 @@ public class MemberController {
                 passwordEncoder);
 
         if(member != null) {
-            // 토큰 생성
             final String token = tokenProvider.create(member);
 
             final MemberDTO responseMemberDTO = MemberDTO.builder()
@@ -104,6 +106,9 @@ public class MemberController {
         }
     }
 
+    /**
+     * 로그아웃
+     * */
     @PostMapping("/signout")
     public ResponseEntity<?> signOut(@AuthenticationPrincipal Member member) {
         if (member != null) {
@@ -120,9 +125,12 @@ public class MemberController {
         }
     }
 
+    /**
+     * 아이디 유효성 검사
+     * */
     @PostMapping("/checkid")
-    public ResponseEntity<?> checkUserId(@RequestBody MemberDTO memberDTO) {
-        Boolean isUserIdVerified = memberService.checkUserId(memberDTO.getId());
+    public ResponseEntity<?> checkLoginId(@RequestBody MemberDTO memberDTO) {
+        Boolean isUserIdVerified = memberService.checkLoginId(memberDTO.getId());
 
         if (isUserIdVerified) {
                 MemberDTO responseUserDTO = MemberDTO.builder()
