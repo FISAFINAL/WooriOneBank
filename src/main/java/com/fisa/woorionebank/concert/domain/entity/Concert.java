@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.concert.entity;
+package com.fisa.woorionebank.concert.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
