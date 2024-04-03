@@ -57,7 +57,7 @@ public class MemberService {
         return null;
     }
 
-    public Boolean checkUserId(String loginId) {
+    public Boolean checkLoginId(String loginId) {
         return !memberRepository.existsByLoginId(loginId);
     }
 }
