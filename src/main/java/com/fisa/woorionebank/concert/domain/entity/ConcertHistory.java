@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.concert.entity;
+package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.entity.Seat;

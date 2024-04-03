@@ -24,7 +24,7 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long memberId;
 
-    private String id;
+    private String loginId;
 
     private String password;
 
@@ -46,7 +46,7 @@ public class Member extends BaseEntity {
     //Member 생성 메서드
     public static Member createMember(MemberDTO memberDTO){
         Member member = new Member();
-        member.id = memberDTO.getId();
+        member.loginId = memberDTO.getId();
         member.password = memberDTO.getPassword();
         member.name = memberDTO.getName();
         member.age = memberDTO.getAge();
