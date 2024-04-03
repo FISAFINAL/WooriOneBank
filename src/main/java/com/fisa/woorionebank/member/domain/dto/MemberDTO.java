@@ -32,5 +32,8 @@ public class MemberDTO {
 
     private List<Account> accounts;
 
-    
+    private String token;
+
+    private Boolean isVerified; // 아이디 중복 체크
+
 }
