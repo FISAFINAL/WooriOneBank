@@ -1,5 +1,5 @@
 ---
-name: 이슈 템플릿
+name: "[FEAT] 이슈 템플릿"
 about: Describe this issue template's purpose here.
 title: "[FEAT]"
 labels: ''
