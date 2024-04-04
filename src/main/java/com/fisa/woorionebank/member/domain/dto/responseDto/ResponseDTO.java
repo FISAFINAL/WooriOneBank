@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.member.domain.dto;
+package com.fisa.woorionebank.member.domain.dto.responseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

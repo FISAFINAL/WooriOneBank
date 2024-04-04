@@ -1,14 +1,15 @@
 package com.fisa.woorionebank.member.service;
 
-import com.fisa.woorionebank.member.domain.dto.MemberDTO;
+import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.modelmapper.ModelMapper;
+
+import javax.transaction.Transactional;
 
 @Slf4j
 @Service
@@ -16,48 +17,25 @@ import org.modelmapper.ModelMapper;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final ModelMapper mapper = new ModelMapper();
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
-    public MemberDTO createMember(MemberDTO memberDTO){
-        Member member = Member.createMember(memberDTO);
-
-        Member save = memberRepository.save(member);
-        MemberDTO dto = mapper.map(save, MemberDTO.class);
-        return dto;
-    }
-
-
-    public Member create(final Member member) {
-        if (member == null || member.getLoginId() == null || member.getEmail() == null) {
+    public Member createMember(registerDTO registerDTO) {
+        if (registerDTO == null) {
             throw new RuntimeException("Invalid arguments");
         }
 
-        final String loginId = member.getLoginId();
-        final String email = member.getEmail();
-
-        if (memberRepository.existsByLoginId(loginId)) {
-            log.warn("UserId already exists {}", loginId);
+        if (memberRepository.existsByLoginId(registerDTO.getEmail())) {
+            log.warn("UserId already exists {}", registerDTO.getId());
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
 
-        if (memberRepository.existsByEmail(email)) {
-            log.warn("Email already exists {}", email);
+        if (memberRepository.existsByEmail(registerDTO.getEmail())) {
+            log.warn("Email already exists {}", registerDTO.getEmail());
             throw new RuntimeException("이미 존재하는 이메일입니다.");
         }
-
+        Member member = Member.createMember(registerDTO, passwordEncoder.encode(registerDTO.getPassword()));
         return memberRepository.save(member);
     }
 
-    public Member getByCredentials(final String loginId, final String password, final PasswordEncoder encoder) {
-        final Member originalUser = memberRepository.findByLoginId(loginId);
-
-        if (originalUser != null && encoder.matches(password, originalUser.getPassword())) return originalUser;
-
-        return null;
-    }
-
-    public Boolean checkLoginId(String loginId) {
-        return !memberRepository.existsByLoginId(loginId);
-    }
 }
