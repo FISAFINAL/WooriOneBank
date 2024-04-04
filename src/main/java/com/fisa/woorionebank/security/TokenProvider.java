@@ -1,9 +1,7 @@
 package com.fisa.woorionebank.security;
 
 import com.fisa.woorionebank.member.entity.Member;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +12,9 @@ import java.util.Date;
 @Slf4j
 @Service
 public class TokenProvider {
+
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
     private static final String SECRET_KEY = "abcdefg";
 
     public String create(Member member) {
@@ -31,11 +32,10 @@ public class TokenProvider {
     }
 
     public String validateAndGetUserId(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
     }
 }
