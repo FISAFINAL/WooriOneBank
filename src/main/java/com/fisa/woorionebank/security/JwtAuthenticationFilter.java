@@ -33,10 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            String token = parseBearerToken(request);
+            String authorizationHeader = request.getHeader(TokenProvider.HEADER_STRING);
             log.info("Filter is running...");
 
-            if(token != null && !token.equalsIgnoreCase("null")) {
+            if(authorizationHeader != null && authorizationHeader.startsWith(TokenProvider.TOKEN_PREFIX)) {
+                //Bearer 자르기
+                String token = authorizationHeader.substring("Bearer ".length());
                 String loginId = tokenProvider.validateAndGetUserId(token);
                 log.info("Authenticated loginId : " + loginId);
 
@@ -57,17 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
         }
-
         filterChain.doFilter(request, response);
-    }
-
-    private String parseBearerToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-
-        return null;
     }
 }

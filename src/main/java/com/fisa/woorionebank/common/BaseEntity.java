@@ -13,7 +13,6 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
@@ -26,7 +25,7 @@ public abstract class BaseEntity {
     @Column(columnDefinition = "datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL COMMENT '수정일자'")
     private LocalDateTime modifiedTime;
 
-    @Column(columnDefinition = "bit default false NOT NULL COMMENT '이용가능여부'")
+    @Column(columnDefinition = "bit default false NULL COMMENT '이용가능여부'")
     private Boolean isDeleted;
 
     public void setIsDeleted(boolean isDeleted) {
