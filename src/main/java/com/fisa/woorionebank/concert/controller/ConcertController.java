@@ -2,11 +2,13 @@ package com.fisa.woorionebank.concert.controller;
 
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.service.ConcertService;
-import com.fisa.woorionebank.member.domain.dto.ResponseDTO;
+import com.fisa.woorionebank.member.domain.dto.responseDto.ResponseDTO;
+import com.fisa.woorionebank.member.entity.Member;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +27,24 @@ public class ConcertController {
         try {
             ResponseConcertDTO concertDTO = concertService.searchConcert(concertId);
             return ResponseEntity.ok().body(concertDTO);
+        }
+        catch (Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
+    }
+
+    /**
+     * 우리 원 더 스테이지 응모
+     * */
+    @PostMapping("/apply")
+    public ResponseEntity<?> applyConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+        try {
+            concertService.applyConcert(member, concertId);
+            return ResponseEntity.noContent().build();
         }
         catch (Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();

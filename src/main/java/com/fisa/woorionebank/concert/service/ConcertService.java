@@ -1,9 +1,15 @@
 package com.fisa.woorionebank.concert.service;
 
+import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.entity.Concert;
+import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
 import com.fisa.woorionebank.concert.domain.entity.PeriodType;
-import com.fisa.woorionebank.concert.repository.ConcertRepository;
+import com.fisa.woorionebank.concert.domain.entity.Status;
+import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
+import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
+import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +21,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ConcertService {
     private final ConcertRepository concertRepository;
+    private final ConcertHistoryRepository concertHistoryRepository;
+    private final MemberRepository memberRepository;
 
     public ResponseConcertDTO searchConcert(Long concertId) {
         Concert concert = concertRepository.findById(concertId).orElse(null);
@@ -61,6 +69,19 @@ public class ConcertService {
         concertDTO.setCurrent(period);
 
         return concertDTO;
+    }
+
+    public void applyConcert(Member member, Long concertId) {
+        Concert concert = concertRepository.findById(concertId).orElse(null);
+        ConcertHistory concertHistory = null;
+
+        ConcertHistoryDTO concertHistoryDTO = null;
+        concertHistoryDTO.setStatus(Status.NONE);
+        concertHistoryDTO.setMember(member);
+        concertHistoryDTO.setConcert(concert);
+
+        concertHistory.createConcertHistory(concertHistoryDTO);
+        concertHistoryRepository.save(concertHistory);
     }
 
 }

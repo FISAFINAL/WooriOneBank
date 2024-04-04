@@ -1,5 +1,10 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
+import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
+import com.fisa.woorionebank.concert.domain.dto.RequestConcertDTO;
+import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
+import com.fisa.woorionebank.member.entity.Grade;
+import com.fisa.woorionebank.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,4 +46,21 @@ public class Concert {
     private String lineup; // 라인업
 
     private String drawInfo; // 당첨 정보
+
+    public static Concert createConcert(ConcertDTO concertDTO){
+        Concert concert = new Concert();
+        concert.concertId = concertDTO.getConcertId();
+        concert.concertName = concertDTO.getConcertName();
+        concert.location = concertDTO.getLocation();
+        concert.startDate = concertDTO.getStartDate();
+        concert.endDate = concertDTO.getEndDate();
+        concert.checkDate = concertDTO.getCheckDate();
+        concert.ticketingDate = concertDTO.getTicketingDate();
+        concert.concertDate = concertDTO.getConcertDate();
+        concert.runningTime = concertDTO.getRunningTime();
+        concert.ageLimit = concertDTO.getAgeLimit();
+        concert.lineup = concertDTO.getLineup();
+        concert.drawInfo = concertDTO.getDrawInfo();
+        return concert;
+    }
 }
