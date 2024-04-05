@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-public class registerDTO {
+public class RegisterDTO {
 
     private String id;
 

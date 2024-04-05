@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.saving.repository;
+package com.fisa.woorionebank.saving.repository.saving;
 
 
 //구현

@@ -1,9 +1,7 @@
 package com.fisa.woorionebank.member.controller;
 
-import com.fisa.woorionebank.member.domain.dto.requestDto.LoginDto;
-import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
+import com.fisa.woorionebank.member.domain.dto.requestDto.RegisterDTO;
 import com.fisa.woorionebank.member.domain.dto.responseDto.ResponseDTO;
-import com.fisa.woorionebank.member.domain.dto.responseDto.ResponseLoginDto;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.service.MemberService;
 import com.fisa.woorionebank.security.TokenProvider;
@@ -12,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,7 +23,7 @@ public class MemberController {
     private final TokenProvider tokenProvider;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody registerDTO registerDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody RegisterDTO registerDTO) {
         try {
             log.info("{요청 확인}");
             Member registeredMember = memberService.createMember(registerDTO);

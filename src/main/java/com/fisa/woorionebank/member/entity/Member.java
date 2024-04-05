@@ -2,7 +2,7 @@ package com.fisa.woorionebank.member.entity;
 
 import com.fisa.woorionebank.account.entity.Account;
 import com.fisa.woorionebank.common.BaseEntity;
-import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
+import com.fisa.woorionebank.member.domain.dto.requestDto.RegisterDTO;
 import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,7 +46,7 @@ public class Member extends BaseEntity {
     private List<Account> accounts = new ArrayList<>();
 
     //Member 생성 메서드
-    public static Member createMember(registerDTO registerDTO, String pw){
+    public static Member createMember(RegisterDTO registerDTO, String pw){
         Member member = new Member();
         member.loginId = registerDTO.getId();
         member.password = pw;

@@ -30,6 +30,7 @@ public enum ErrorCode implements EnumModel {
 	NOT_FOUND_Member(404, "N001", "존재하지 않는 회원입니다."),
 	NOT_FOUND_Saving(404, "N002", "존재하지 않는 적금입니다."),
 	NOT_FOUND_Account(404, "N003", "존재하지 않는 계좌입니다."),
+	NOT_FOUND_Celebrity(404, "N004", "존재하지 않는 연예인입니다."),
 
 	;
 	private int status;
