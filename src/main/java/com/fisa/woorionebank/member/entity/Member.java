@@ -4,6 +4,7 @@ import com.fisa.woorionebank.account.entity.Account;
 import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
 import com.fisa.woorionebank.saving.entity.Saving;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.saving.entity;
+package com.fisa.woorionebank.saving.domain.entity;
 
 public enum DepositDay {
     MONDAY,

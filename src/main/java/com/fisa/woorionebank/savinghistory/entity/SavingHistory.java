@@ -1,16 +1,17 @@
 package com.fisa.woorionebank.savinghistory.entity;
 
 import com.fisa.woorionebank.account.entity.Account;
-import com.fisa.woorionebank.saving.entity.Saving;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Setter
 @Table(name = "saving_history")
 @Entity
 public class SavingHistory {
@@ -26,8 +27,8 @@ public class SavingHistory {
     @JoinColumn(name = "saving_id")
     private Saving saving;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "account_id")
+//    private Account account;
 
 }
