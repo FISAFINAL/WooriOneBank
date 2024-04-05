@@ -22,6 +22,6 @@ public class CardHistory {
 
     private char BAS_YH;
 
-    
     private char AGE;
+
 }

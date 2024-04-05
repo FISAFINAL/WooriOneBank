@@ -1,5 +1,7 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
+import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
+import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.entity.Seat;
 import lombok.AllArgsConstructor;
@@ -41,4 +43,12 @@ public class ConcertHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_id")
     private Concert concert;
+
+    public static ConcertHistory createConcertHistory(ConcertHistoryDTO concertHistoryDTO){
+        ConcertHistory concertHistory = new ConcertHistory();
+        concertHistory.status = concertHistoryDTO.getStatus();
+        concertHistory.member = concertHistoryDTO.getMember();
+        concertHistory.concert = concertHistoryDTO.getConcert();
+        return concertHistory;
+    }
 }
