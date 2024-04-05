@@ -2,12 +2,11 @@ package com.fisa.woorionebank.concert.service;
 
 import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
-import com.fisa.woorionebank.concert.domain.entity.Concert;
-import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
-import com.fisa.woorionebank.concert.domain.entity.PeriodType;
-import com.fisa.woorionebank.concert.domain.entity.Status;
+import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
+import com.fisa.woorionebank.concert.domain.entity.*;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
+import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -84,4 +84,30 @@ public class ConcertService {
         concertHistoryRepository.save(concertHistory);
     }
 
+    public ResponseDrawDTO drawConcert(Member member, Long concertId) {
+        Concert concert = concertRepository.findById(concertId).orElse(null);
+
+        ResponseDrawDTO responseDrawDTO = new ResponseDrawDTO();
+        responseDrawDTO.setConcertName(concert.getConcertName());
+        responseDrawDTO.setMemberName(member.getName());
+        responseDrawDTO.setArea(Area.R); // TODO 좌석 당첨 로직을 짜야 합니다.
+
+        // R석 우리카드 실적 높은 사람(1만)
+        // A석 적금 가입 고객(3만)
+        // B석 신청한 사람 중 랜덤(2만)
+
+        member.getGrade();
+        // 일단 신청한 사람 중에 등급별로 나눈다.
+        //
+
+        Map<Long, Grade> winners = new HashMap<>();
+        Random random = new Random();
+
+        // winner에 값을 넣으려면 일단 당첨된 사람들을 조회해야 한다.
+//        memberRepository
+
+//        Member concertHistoryRepository.findByConcertId(concertId); // 이러면 이제 2024 우리 원 더 콘서트 신청한 내역들을 다 가져올 수 있다.
+
+        return responseDrawDTO;
+    }
 }

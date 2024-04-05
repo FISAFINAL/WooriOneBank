@@ -1,6 +1,7 @@
 package com.fisa.woorionebank.concert.controller;
 
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
+import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.service.ConcertService;
 import com.fisa.woorionebank.member.domain.dto.responseDto.ResponseDTO;
 import com.fisa.woorionebank.member.entity.Member;
@@ -28,7 +29,7 @@ public class ConcertController {
             ResponseConcertDTO concertDTO = concertService.searchConcert(concertId);
             return ResponseEntity.ok().body(concertDTO);
         }
-        catch (Exception e) {
+        catch(Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
 
             return ResponseEntity
@@ -46,7 +47,24 @@ public class ConcertController {
             concertService.applyConcert(member, concertId);
             return ResponseEntity.noContent().build();
         }
-        catch (Exception e) {
+        catch(Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
+    }
+
+    /**
+     * 우리 원 더 스테이지 당첨 내역 확인
+     * */
+    @GetMapping("/draw")
+    public ResponseEntity<?> drawConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+        try {
+            ResponseDrawDTO responseDrawDTO = concertService.drawConcert(member, concertId);
+            return ResponseEntity.ok().body(responseDrawDTO);
+        } catch(Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
 
             return ResponseEntity

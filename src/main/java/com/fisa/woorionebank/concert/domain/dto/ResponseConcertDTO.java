@@ -1,7 +1,6 @@
 package com.fisa.woorionebank.concert.domain.dto;
 
 import com.fisa.woorionebank.concert.domain.entity.PeriodType;
-import com.fisa.woorionebank.member.entity.Current;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,6 @@ public class ResponseConcertDTO {
      * 콘서트 제목, 공연 일자, 공연 장소, 라인업, 스페셜 MC, 응모 기간, 당첨, 좌석 예매
      * 현재 시점(지금이 응모 기간인지 체크하기 위함)
      * */
-
     private String concertName;
 
     private String location;
