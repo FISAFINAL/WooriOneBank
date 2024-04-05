@@ -3,7 +3,6 @@ package com.fisa.woorionebank.member.entity;
 import com.fisa.woorionebank.account.entity.Account;
 import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
-import com.fisa.woorionebank.saving.entity.Saving;
 import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +45,12 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Account> accounts = new ArrayList<>();
 
+    private int additionalPoint; // 회원 등급에 따른 가산점 부여
+
+    public void setAdditionalPoint(int additionalPoint) {
+        this.additionalPoint = additionalPoint;
+    }
+
     //Member 생성 메서드
     public static Member createMember(registerDTO registerDTO, String pw){
         Member member = new Member();
@@ -54,7 +59,7 @@ public class Member extends BaseEntity {
         member.name = registerDTO.getName();
         member.age = registerDTO.getAge();
         member.email = registerDTO.getEmail();
-        member.grade = Grade.VIP;
+        member.grade = Grade.VIP; // TODO 추후 우리카드 데이터로 받아와야 합니다.
         return member;
     }
 }

@@ -84,29 +84,75 @@ public class ConcertService {
         concertHistoryRepository.save(concertHistory);
     }
 
+    // 회원 등급을 가산점으로 변환하는 함수
+    public int transferPoint(Grade grade) {
+
+        // 회원 등급을 가산점으로 변환하는 함수
+        Map<Grade, Integer> map = new HashMap<>();
+        Grade[] grades = Grade.values();
+        int len = Grade.values().length;
+
+        for (int i = len; i > 0; i--) {
+            map.put(grades[i], i);
+        }
+
+        return map.get(grade);
+    }
+
     public ResponseDrawDTO drawConcert(Member member, Long concertId) {
         Concert concert = concertRepository.findById(concertId).orElse(null);
 
         ResponseDrawDTO responseDrawDTO = new ResponseDrawDTO();
         responseDrawDTO.setConcertName(concert.getConcertName());
         responseDrawDTO.setMemberName(member.getName());
-        responseDrawDTO.setArea(Area.R); // TODO 좌석 당첨 로직을 짜야 합니다.
+        responseDrawDTO.setArea(Area.R); // TODO 좌석 당첨 로직을 짜야 합니다. R석(완료), A석, B석
 
+        /* 좌석 당첨 로직 */
         // R석 우리카드 실적 높은 사람(1만)
         // A석 적금 가입 고객(3만)
         // B석 신청한 사람 중 랜덤(2만)
+        List<Member> memberList = concertHistoryRepository.findMemberByConcertId(concertId);
 
-        member.getGrade();
-        // 일단 신청한 사람 중에 등급별로 나눈다.
-        //
+        /*
+        * seatAvailable 변수는 가용 좌석 수입니다.
+        *  1. Concert entity에 컬럼 추가
+        *  2. Seat(공연장 정보) entity 추가하는 방법 대신,
+         * 우선 당첨 내역 확인 로직에서만 관리하고 있습니다.
+        * */
+        int seatAvailableR = 10_000;
+        int seatAvailableA = 30_000;
+        int seatAvailableB = 20_000;
 
-        Map<Long, Grade> winners = new HashMap<>();
+        /* R석 당첨자 뽑기 */
+        // 회원 등급을 가산점으로 변환하기
+        Map<Member, Integer> winners = new HashMap<>();
+        List<Member> winnerPool = new ArrayList<>();
+
+        for(Member m : memberList) {
+            int point = transferPoint(m.getGrade());
+
+            // 우승자 풀에 추가 (가산점만큼 여러 번 추가)
+            for (int i = 0; i < point; i++) {
+                winnerPool.add(member);
+            }
+        }
+
         Random random = new Random();
 
-        // winner에 값을 넣으려면 일단 당첨된 사람들을 조회해야 한다.
-//        memberRepository
+        // 랜덤으로 R석 당첨자 선발
+        for (int i = 0; i < seatAvailableR && !winnerPool.isEmpty(); i++) {
+            int index = random.nextInt(winnerPool.size());
+            winners.put(winnerPool.remove(index), 0);
 
-//        Member concertHistoryRepository.findByConcertId(concertId); // 이러면 이제 2024 우리 원 더 콘서트 신청한 내역들을 다 가져올 수 있다.
+            // TODO ConcertHistory > status에 반영해줘야 한다.
+        }
+        // end of R석 당첨 로직 : winners에 담겨 있음.
+
+        /* TODO A석 당첨자 뽑기 */
+        // R석 미당첨자도 A석의 winnersPool에 넣어줘야 한다.
+
+        /* TODO B석 당첨자 뽑기 */
+
 
         return responseDrawDTO;
     }
