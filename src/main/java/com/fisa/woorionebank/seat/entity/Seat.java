@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.seat.entity;
 
+import com.fisa.woorionebank.concert.domain.entity.ConcertVenue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,4 +28,8 @@ public class Seat {
     private int seatX;
 
     private int seatY;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venue_id")
+    private ConcertVenue concertVenue;
 }

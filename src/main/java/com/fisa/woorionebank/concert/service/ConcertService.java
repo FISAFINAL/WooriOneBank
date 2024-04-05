@@ -9,8 +9,10 @@ import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
+import com.fisa.woorionebank.seat.entity.Seat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -155,5 +157,18 @@ public class ConcertService {
 
 
         return responseDrawDTO;
+    }
+
+    public void selectSeat(Long concertId) {
+//        concertRepository.
+
+//        select s from Seat s join Concert c on s.concert.concertId = c.concertId where c.concert_venue.concert_venue_id = s.concert_venue_id
+
+
+        // parameter : concertId
+        // return : List<Seat>
+
+//        @Query("select m from ConcertHistory c join Member m on m.memberId = c.member.memberId where c.concert.concertId = :#{#concertId}")
+//        List<Member> findMemberByConcertId(Long concertId);
     }
 }

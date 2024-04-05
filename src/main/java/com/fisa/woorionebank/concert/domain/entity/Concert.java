@@ -1,9 +1,6 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
-import com.fisa.woorionebank.concert.domain.dto.RequestConcertDTO;
-import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
-import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +44,12 @@ public class Concert {
 
     private String drawInfo; // 당첨 정보
 
+    private String imgUrl; // 공연 정보 포스터 이미지
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venue_id")
+    private ConcertVenue concertVenue;
+
     public static Concert createConcert(ConcertDTO concertDTO){
         Concert concert = new Concert();
         concert.concertId = concertDTO.getConcertId();
@@ -61,6 +64,7 @@ public class Concert {
         concert.ageLimit = concertDTO.getAgeLimit();
         concert.lineup = concertDTO.getLineup();
         concert.drawInfo = concertDTO.getDrawInfo();
+        concert.imgUrl = concertDTO.getImgUrl();
         return concert;
     }
 }

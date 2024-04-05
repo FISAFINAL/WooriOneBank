@@ -36,7 +36,7 @@ public class ResponseConcertDTO {
 
     private String lineup; // 라인업
 
-    private String drawInfo; // 당첨 정보
+    private String drawInfo; // 당첨 기준에 관한 정보
 
     private PeriodType current; // 현재 시점(지금이 응모 기간인지 체크하기 위함)
 

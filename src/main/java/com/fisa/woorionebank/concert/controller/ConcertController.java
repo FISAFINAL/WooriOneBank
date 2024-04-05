@@ -72,4 +72,18 @@ public class ConcertController {
                     .body(responseDTO);
         }
     }
+
+    /**
+     * 우리 원 더 스테이지 예매 좌석 조회
+     * */
+    @GetMapping("/seat")
+    public ResponseEntity<?> selectSeat(@RequestParam Long concertId) {
+        try {
+            concertService.selectSeat(null);
+            return null;
+//            return ResponseEntity.ok().body();
+        } catch(Exception e) {
+            return null;
+        }
+    }
 }
