@@ -2,6 +2,9 @@ package com.fisa.woorionebank.service;
 
 
 import com.fisa.woorionebank.account.repository.AccountRepository;
+import com.fisa.woorionebank.member.domain.dto.requestDto.RegisterDTO;
+import com.fisa.woorionebank.member.entity.Grade;
+import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.saving.repository.celebrity.CelebrityRepository;
 import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
@@ -12,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +38,20 @@ public class SavingServiceTest {
     private SavingService savingService;
     @BeforeEach
     public void before(){
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        RegisterDTO registerDTO1 = new RegisterDTO("ID1", "PW1", "memeber1", 20, "email1", Grade.VVIP);
+        RegisterDTO registerDTO2 = new RegisterDTO("ID2", "PW2", "memeber2", 21, "email2", Grade.VIP);
+        RegisterDTO registerDTO3 = new RegisterDTO("ID3", "PW3", "memeber3", 22, "email3", Grade.PLATINUM);
+        RegisterDTO registerDTO4 = new RegisterDTO("ID4", "PW4", "memeber4", 23, "email4", Grade.GOLD);
+        RegisterDTO registerDTO5 = new RegisterDTO("ID5", "PW5", "memeber5", 24, "email5", Grade.NONE);
+
+        Member member1 = Member.createMember(registerDTO1, passwordEncoder.encode(registerDTO1.getPassword()));
+        Member member2 = Member.createMember(registerDTO2, passwordEncoder.encode(registerDTO2.getPassword()));
+        Member member3 = Member.createMember(registerDTO3, passwordEncoder.encode(registerDTO3.getPassword()));
+        Member member4 = Member.createMember(registerDTO4, passwordEncoder.encode(registerDTO4.getPassword()));
+        Member member5 = Member.createMember(registerDTO5, passwordEncoder.encode(registerDTO5.getPassword()));
+
+
 
     }
 

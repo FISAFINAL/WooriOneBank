@@ -56,4 +56,10 @@ public class Member extends BaseEntity {
         member.grade = Grade.VIP;
         return member;
     }
+
+    //연관관계 메소드
+    public void addAccount(Account account){
+        accounts.add(account);
+    }
+
 }
