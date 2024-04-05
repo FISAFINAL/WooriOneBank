@@ -2,7 +2,7 @@ package com.fisa.woorionebank.member.domain.dto;
 
 import com.fisa.woorionebank.account.entity.Account;
 import com.fisa.woorionebank.member.entity.Grade;
-import com.fisa.woorionebank.saving.entity.Saving;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.*;
 
 import java.util.List;

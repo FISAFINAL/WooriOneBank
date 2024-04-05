@@ -4,12 +4,14 @@ import com.fisa.woorionebank.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Setter
 @Table(name = "account")
 @Entity
 public class Account {
@@ -22,7 +24,7 @@ public class Account {
 
     private String accountNumber;
 
-    private int balance;
+    private BigDecimal balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
