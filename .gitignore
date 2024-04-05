@@ -274,4 +274,5 @@ gradle-app.setting
 *.yml
 
 # queryDsl ignore 추가
+**/generated
 /src/main/generated/
