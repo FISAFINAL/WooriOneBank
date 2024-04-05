@@ -12,6 +12,7 @@ public enum ErrorCode implements EnumModel {
 	// Member 400번대
 	// Saving 300번대
 	// Concert 500번대
+	// Account 600번대
 
 	//회원 로그인 시 발생 가능 예외
 	INVALID_Member_Login(401, "M001", "존재하지 않는 회원 정보입니다."),
@@ -22,10 +23,13 @@ public enum ErrorCode implements EnumModel {
 	//중복여부 체크
 	DUPLICATE_Member(400, "M003", "중복된 이메일입니다."),
 
+	// 통장 -> 적금 이체할때 잔액 부족
+	INSUFFICIENT_FUNDS(600, "A002", "적금에 입금할 통장 잔액이 부족합니다."),
 
 	// 404 not fount Exception
 	NOT_FOUND_Member(404, "N001", "존재하지 않는 회원입니다."),
 	NOT_FOUND_Saving(404, "N002", "존재하지 않는 적금입니다."),
+	NOT_FOUND_Account(404, "N003", "존재하지 않는 계좌입니다."),
 
 	;
 	private int status;
