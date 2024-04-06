@@ -1,6 +1,5 @@
 package com.fisa.woorionebank.concert.service;
 
-import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.domain.entity.*;
@@ -9,10 +8,8 @@ import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
-import com.fisa.woorionebank.seat.entity.Seat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -75,14 +72,13 @@ public class ConcertService {
 
     public void applyConcert(Member member, Long concertId) {
         Concert concert = concertRepository.findById(concertId).orElse(null);
-        ConcertHistory concertHistory = null;
 
-        ConcertHistoryDTO concertHistoryDTO = null;
-        concertHistoryDTO.setStatus(Status.NONE);
-        concertHistoryDTO.setMember(member);
-        concertHistoryDTO.setConcert(concert);
+        ConcertHistory concertHistory = ConcertHistory.builder()
+                .status(Status.NONE)
+                .member(member)
+                .concert(concert)
+                .build();
 
-        concertHistory.createConcertHistory(concertHistoryDTO);
         concertHistoryRepository.save(concertHistory);
     }
 

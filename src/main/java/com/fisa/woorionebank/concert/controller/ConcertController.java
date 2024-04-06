@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.concert.controller;
 
+import com.fisa.woorionebank.concert.domain.dto.RequestDrawDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.service.ConcertService;
@@ -42,9 +43,9 @@ public class ConcertController {
      * 우리 원 더 스테이지 응모
      * */
     @PostMapping("/apply")
-    public ResponseEntity<?> applyConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+    public ResponseEntity<?> applyConcert(@AuthenticationPrincipal Member member, @RequestBody RequestDrawDTO requestDrawDTO) {
         try {
-            concertService.applyConcert(member, concertId);
+            concertService.applyConcert(member, requestDrawDTO.getConcertId());
             return ResponseEntity.noContent().build();
         }
         catch(Exception e) {
