@@ -20,8 +20,8 @@ public class ConcertVenue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "venue_id")
-    private Long venueId;
+    @Column(name = "concert_venue_id")
+    private Long concertVenueId;
 
     private String venueName;
 
@@ -29,10 +29,10 @@ public class ConcertVenue {
 
     private int capacity;
 
-    @OneToMany(mappedBy = "concert_venue")
+    @OneToMany(mappedBy = "concertVenue")
     private List<Concert> concerts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "concert_venue")
+    @OneToMany(mappedBy = "concertVenue")
     private List<Seat> seats = new ArrayList<>();
 
 }

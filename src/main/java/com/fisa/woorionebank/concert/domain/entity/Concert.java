@@ -1,7 +1,6 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
-import com.fisa.woorionebank.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,7 +46,7 @@ public class Concert {
     private String imgUrl; // 공연 정보 포스터 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "venue_id")
+    @JoinColumn(name = "concert_venue_id")
     private ConcertVenue concertVenue;
 
     public static Concert createConcert(ConcertDTO concertDTO){

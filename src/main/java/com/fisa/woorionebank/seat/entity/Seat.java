@@ -30,6 +30,6 @@ public class Seat {
     private int seatY;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "venue_id")
+    @JoinColumn(name = "concert_venue_id")
     private ConcertVenue concertVenue;
 }
