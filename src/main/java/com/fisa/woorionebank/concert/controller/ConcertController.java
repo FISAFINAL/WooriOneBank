@@ -6,12 +6,15 @@ import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.service.ConcertService;
 import com.fisa.woorionebank.member.domain.dto.responseDto.ResponseDTO;
 import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/concert")
@@ -80,11 +83,14 @@ public class ConcertController {
     @GetMapping("/seat")
     public ResponseEntity<?> selectSeat(@RequestParam Long concertId) {
         try {
-            concertService.selectSeat(null);
-            return null;
-//            return ResponseEntity.ok().body();
+            List<ResponseSeatDTO> seats = concertService.selectSeat(concertId);
+            return ResponseEntity.ok().body(seats);
         } catch(Exception e) {
-            return null;
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
         }
     }
 }

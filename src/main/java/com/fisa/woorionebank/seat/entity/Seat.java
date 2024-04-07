@@ -1,10 +1,7 @@
 package com.fisa.woorionebank.seat.entity;
 
 import com.fisa.woorionebank.concert.domain.entity.ConcertVenue;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -32,4 +29,17 @@ public class Seat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_venue_id")
     private ConcertVenue concertVenue;
+
+    @Override
+    public String toString() {
+        return "Seat{" +
+                "seatId=" + seatId +
+                ", seatClass=" + seatClass +
+                ", seatNumber='" + seatNumber + '\'' +
+                ", seatX=" + seatX +
+                ", seatY=" + seatY +
+                ", concertVenue=" + (concertVenue != null ? concertVenue.getConcertVenueId() : null) +
+                '}';
+    }
+
 }
