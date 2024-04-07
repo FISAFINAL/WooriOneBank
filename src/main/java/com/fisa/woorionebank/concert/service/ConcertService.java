@@ -8,6 +8,7 @@ import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
+import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
 import com.fisa.woorionebank.seat.repository.SeatRepository;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -78,7 +80,7 @@ public class ConcertService {
         Concert concert = concertRepository.findById(concertId).orElse(null);
 
         ConcertHistory concertHistory = ConcertHistory.builder()
-                .status(Status.NONE)
+                .status(Status.APPLY)
                 .member(member)
                 .concert(concert)
                 .build();
@@ -146,7 +148,7 @@ public class ConcertService {
             int index = random.nextInt(winnerPool.size());
             winners.put(winnerPool.remove(index), 0);
 
-            // TODO ConcertHistory > status에 반영해줘야 한다.
+            // TODO ConcertHistory > status, area에 반영해줘야 한다.
         }
         // end of R석 당첨 로직 : winners에 담겨 있음.
 
@@ -177,5 +179,17 @@ public class ConcertService {
         }
 
         return seats;
+    }
+
+    @Transactional
+    public void reserveSeat(Member member, RequestSeatDTO seatDTO) {
+        // concert_history의 좌석id(fk), 예매 일시 업데이트
+        Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY());
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId());
+
+        concertHistory.reserve();
+        concertHistory.setSeat(seat);
+
+        concertHistoryRepository.save(concertHistory);
     }
 }

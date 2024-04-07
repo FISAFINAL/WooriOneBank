@@ -6,6 +6,7 @@ import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.service.ConcertService;
 import com.fisa.woorionebank.member.domain.dto.responseDto.ResponseDTO;
 import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -85,6 +86,23 @@ public class ConcertController {
         try {
             List<ResponseSeatDTO> seats = concertService.selectSeat(concertId);
             return ResponseEntity.ok().body(seats);
+        } catch(Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
+    }
+
+    /**
+     * 우리 원 더 스테이지 좌석 예매
+     * */
+    @PostMapping("/reservation")
+    public ResponseEntity<?> reserveSeat(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
+        try {
+            concertService.reserveSeat(member, requestSeatDTO);
+            return ResponseEntity.noContent().build();
         } catch(Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
 

@@ -1,6 +1,5 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
-import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.entity.Seat;
@@ -43,6 +42,15 @@ public class ConcertHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_id")
     private Concert concert;
+
+    public void setSeat(Seat seat) {
+        this.seat = seat;
+    }
+
+    public void reserve() {
+        this.status = Status.SUCCESS;
+        this.ticketingDate = LocalDateTime.now();
+    }
 
     public static ConcertHistory createConcertHistory(ConcertHistoryDTO concertHistoryDTO){
         ConcertHistory concertHistory = new ConcertHistory();

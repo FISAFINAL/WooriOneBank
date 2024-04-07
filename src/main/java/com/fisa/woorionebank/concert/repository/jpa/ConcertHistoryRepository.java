@@ -12,4 +12,7 @@ public interface ConcertHistoryRepository extends JpaRepository<ConcertHistory, 
     @Query("select m from ConcertHistory c join Member m on m.memberId = c.member.memberId where c.concert.concertId = :#{#concertId}")
     List<Member> findMemberByConcertId(Long concertId);
 
+    @Query("select c from ConcertHistory c where c.member.memberId = ?1 and c.concert.concertId = ?2")
+    ConcertHistory findByMemberIdAndConcertId(Long memberId, Long concertId);
+
 }
