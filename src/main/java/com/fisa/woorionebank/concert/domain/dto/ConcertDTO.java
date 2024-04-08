@@ -34,4 +34,6 @@ public class ConcertDTO {
     private String lineup; // 라인업
 
     private String drawInfo; // 당첨 정보
+
+    private String imgUrl; // 공연 포스터 이미지
 }

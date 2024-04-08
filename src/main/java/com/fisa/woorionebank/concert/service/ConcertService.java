@@ -1,6 +1,5 @@
 package com.fisa.woorionebank.concert.service;
 
-import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.domain.entity.*;
@@ -9,10 +8,15 @@ import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
+import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
+import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
+import com.fisa.woorionebank.seat.entity.Seat;
+import com.fisa.woorionebank.seat.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -23,15 +27,16 @@ public class ConcertService {
     private final ConcertRepository concertRepository;
     private final ConcertHistoryRepository concertHistoryRepository;
     private final MemberRepository memberRepository;
+    private final SeatRepository seatRepository;
 
     public ResponseConcertDTO searchConcert(Long concertId) {
         Concert concert = concertRepository.findById(concertId).orElse(null);
 
         /*
-        * 공연 이벤트 기간 계산 로직
-        * startDate, endDate, checkDate, ticketingDate, concertDate를 기준으로 각 단계별로 현재 시점이 어느 기간에 해당하는지 계산합니다.
-        * 결과값은 PeriodType으로 반환됩니다.
-        * */
+         * 공연 이벤트 기간 계산 로직
+         * startDate, endDate, checkDate, ticketingDate, concertDate를 기준으로 각 단계별로 현재 시점이 어느 기간에 해당하는지 계산합니다.
+         * 결과값은 PeriodType으로 반환됩니다.
+         * */
         LocalDateTime startDate = concert.getStartDate();
         LocalDateTime endDate = concert.getEndDate();
         LocalDateTime checkDate = concert.getCheckDate();
@@ -73,14 +78,13 @@ public class ConcertService {
 
     public void applyConcert(Member member, Long concertId) {
         Concert concert = concertRepository.findById(concertId).orElse(null);
-        ConcertHistory concertHistory = null;
 
-        ConcertHistoryDTO concertHistoryDTO = null;
-        concertHistoryDTO.setStatus(Status.NONE);
-        concertHistoryDTO.setMember(member);
-        concertHistoryDTO.setConcert(concert);
+        ConcertHistory concertHistory = ConcertHistory.builder()
+                .status(Status.APPLY)
+                .member(member)
+                .concert(concert)
+                .build();
 
-        concertHistory.createConcertHistory(concertHistoryDTO);
         concertHistoryRepository.save(concertHistory);
     }
 
@@ -114,11 +118,11 @@ public class ConcertService {
         List<Member> memberList = concertHistoryRepository.findMemberByConcertId(concertId);
 
         /*
-        * seatAvailable 변수는 가용 좌석 수입니다.
-        *  1. Concert entity에 컬럼 추가
-        *  2. Seat(공연장 정보) entity 추가하는 방법 대신,
+         * seatAvailable 변수는 가용 좌석 수입니다.
+         *  1. Concert entity에 컬럼 추가
+         *  2. Seat(공연장 정보) entity 추가하는 방법 대신,
          * 우선 당첨 내역 확인 로직에서만 관리하고 있습니다.
-        * */
+         * */
         int seatAvailableR = 10_000;
         int seatAvailableA = 30_000;
         int seatAvailableB = 20_000;
@@ -128,7 +132,7 @@ public class ConcertService {
         Map<Member, Integer> winners = new HashMap<>();
         List<Member> winnerPool = new ArrayList<>();
 
-        for(Member m : memberList) {
+        for (Member m : memberList) {
             int point = transferPoint(m.getGrade());
 
             // 우승자 풀에 추가 (가산점만큼 여러 번 추가)
@@ -144,7 +148,7 @@ public class ConcertService {
             int index = random.nextInt(winnerPool.size());
             winners.put(winnerPool.remove(index), 0);
 
-            // TODO ConcertHistory > status에 반영해줘야 한다.
+            // TODO ConcertHistory > status, area에 반영해줘야 한다.
         }
         // end of R석 당첨 로직 : winners에 담겨 있음.
 
@@ -155,5 +159,37 @@ public class ConcertService {
 
 
         return responseDrawDTO;
+    }
+
+    public List<ResponseSeatDTO> selectSeat(Long concertId) {
+        Long concertVenueId = concertRepository.findConcertVenueByConcertId(concertId);
+        List<Long> seatsIdList = seatRepository.findSeatByConcertVenueId(concertVenueId);
+        List<ResponseSeatDTO> seats = new ArrayList<>();
+
+        for (Long seatId : seatsIdList) {
+            Optional<Seat> seatOptional = seatRepository.findById(seatId);
+            seatOptional.ifPresent(seat -> {
+                ResponseSeatDTO responseSeatDTO = new ResponseSeatDTO();
+                responseSeatDTO.setSeatClass(seat.getSeatClass());
+                responseSeatDTO.setSeatNumber(seat.getSeatNumber());
+                responseSeatDTO.setSeatX(seat.getSeatX());
+                responseSeatDTO.setSeatY(seat.getSeatY());
+                seats.add(responseSeatDTO);
+            });
+        }
+
+        return seats;
+    }
+
+    @Transactional
+    public void reserveSeat(Member member, RequestSeatDTO seatDTO) {
+        // concert_history의 좌석id(fk), 예매 일시 업데이트
+        Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY());
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId());
+
+        concertHistory.reserve();
+        concertHistory.setSeat(seat);
+
+        concertHistoryRepository.save(concertHistory);
     }
 }
