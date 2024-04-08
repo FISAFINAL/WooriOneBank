@@ -68,15 +68,14 @@ public class SavingService {
 
 
         // 잔액 확인 - 계좌에 10,000 (생성비용) 보다 많아야함
-        long creationCost = 10000L;
-        if (account.getBalance().compareTo(BigDecimal.valueOf(creationCost)) < 0) {
+        BigDecimal creationCost = BigDecimal.valueOf(10000);
+
+        if (account.getBalance().compareTo(creationCost) < 0) {
             throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
         }
 
         // 자동이체 계좌에서 생성비용 (10,000원) 차감
-        account.setBalance(
-                account.getBalance().subtract(BigDecimal.valueOf(creationCost))
-        );
+        account.minus(creationCost);
 
         String savingAccount = generateUniqueAccountNumber();
 
@@ -85,7 +84,7 @@ public class SavingService {
                 savingAccount,
                 0,
                 LocalDateTime.now().plus(26, ChronoUnit.WEEKS),
-                BigDecimal.valueOf(creationCost),
+                creationCost,
                 account,
                 member,
                 celebrity
@@ -96,7 +95,7 @@ public class SavingService {
         // 적금 입금 내역 기록 (생성 내역 기록)
         savingHistoryRepository.save(SavingHistory.of(
                 TransactionType.CREATION,
-                BigDecimal.valueOf(creationCost),
+                creationCost,
                 savedSaving
         ));
 
@@ -128,7 +127,7 @@ public class SavingService {
      */
     public SavingRuleDTO addRule(SavingAddRuleRequestDTO requestDTO) {
 
-        // 계좌 조회
+        // 적금 조회
         final Saving saving = savingRepository.findById(requestDTO.getSavingId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Saving));
 
@@ -159,6 +158,40 @@ public class SavingService {
                 .collect(Collectors.toList());
 
         return new RuleListDTO(ruleDTOList);
+    }
+
+
+    /**
+     * 최애적금으로 입금 By 규칙
+     *
+     * @return
+     */
+    public SavingDTO deposit(Long savingRuleId) {
+
+        // 규칙 조회
+        final SavingRule savingRule = savingRuleRepository.findById(savingRuleId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SavingRule));
+
+        Saving saving = savingRule.getSaving();
+        Account account = savingRule.getSaving().getAccount();
+        BigDecimal depositAmount = savingRule.getDepositAmount();
+
+        // 자동이체 계좌에서 비용차감
+        account.minus(depositAmount);
+
+        // 적금에 입금
+        saving.plus(depositAmount);
+
+        // 적금 입금 내역 기록 (자유 규칙입금 내역 기록)
+        savingHistoryRepository.save(SavingHistory.of(
+                TransactionType.FREE,
+                depositAmount,
+                saving
+        ));
+
+        //반환
+        return SavingDTO.fromEntity(saving);
+
     }
 
 
