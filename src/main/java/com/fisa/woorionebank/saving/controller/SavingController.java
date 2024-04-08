@@ -4,6 +4,7 @@ import com.fisa.woorionebank.saving.domain.requestdto.SavingAddRuleRequestDTO;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingCreateRequestDTO;
 import com.fisa.woorionebank.saving.domain.responsedto.RuleListDTO;
 import com.fisa.woorionebank.saving.domain.responsedto.SavingDTO;
+import com.fisa.woorionebank.saving.domain.responsedto.SavingListDTO;
 import com.fisa.woorionebank.saving.domain.responsedto.SavingRuleDTO;
 import com.fisa.woorionebank.saving.service.SavingService;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,17 @@ public class SavingController {
         return ResponseEntity.ok(savingService.createSaving(requestDTO));
     }
 
+    @GetMapping("/{memberId}")
+    public ResponseEntity<SavingListDTO> findSavings(@PathVariable("memberId") Long memberId) {
+        return ResponseEntity.ok(savingService.findSavings(memberId));
+    }
+
     @PostMapping("/rules")
     public ResponseEntity<SavingRuleDTO> addRule(@RequestBody SavingAddRuleRequestDTO requestDTO) {
         return ResponseEntity.ok(savingService.addRule(requestDTO));
     }
 
-    @GetMapping("rules")
+    @GetMapping("/rules/{savingId}")
     public ResponseEntity<RuleListDTO> findRules(@PathVariable("savingId") Long savingId) {
         return ResponseEntity.ok(savingService.findRules(savingId));
     }

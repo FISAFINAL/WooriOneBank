@@ -37,7 +37,7 @@ public class AccountService {
         accountRepository.save(account);
 
         //연관관계 메소드 호출
-        account.setMember(member);
+        member.addAccount(account);
 
         return account;
     }
