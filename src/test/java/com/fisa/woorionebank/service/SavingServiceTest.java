@@ -12,8 +12,11 @@ import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.saving.domain.entity.Celebrity;
 import com.fisa.woorionebank.saving.domain.entity.DepositDay;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
+import com.fisa.woorionebank.saving.domain.requestdto.SavingAddRuleRequestDTO;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingCreateRequestDTO;
 import com.fisa.woorionebank.saving.domain.responsedto.SavingDTO;
+import com.fisa.woorionebank.saving.domain.responsedto.SavingRuleDTO;
 import com.fisa.woorionebank.saving.repository.celebrity.CelebrityRepository;
 import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
 import com.fisa.woorionebank.saving.service.SavingService;
@@ -36,6 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -66,7 +71,7 @@ public class SavingServiceTest {
 
     @Test
 //    @Rollback(value = false)
-    public void createSaving() throws Exception{
+    public void 최애적금생성() throws Exception{
         //given
         Member member1 = new Member("ID1", "PW1", "memeber1", 20, "email1", Grade.VVIP);
         em.persist(member1);
@@ -80,18 +85,47 @@ public class SavingServiceTest {
                 "울오빠들",
                 "우리은행",
                 account1.getAccountNumber(),
-                "Monday",
                 celebrity1.getCelebrityId(),
                 member1.getMemberId()
         );
-
-        //회원 조회
-        final Member member = memberRepository.findById(member1.getMemberId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Member));
-
-        SavingDTO saving = savingService.createSaving(requestDTO);
+        SavingDTO savingDTO = savingService.createSaving(requestDTO);
         //then
-        assertThat(saving.getSavingName()).isEqualTo("울오빠들");
+        assertThat(savingDTO.getSavingName()).isEqualTo("울오빠들");
+
+    }
+
+    @Test
+    public void 최애적금규칙추가() throws Exception{
+        //given
+        Member member1 = new Member("ID1", "PW1", "memeber1", 20, "email1", Grade.VVIP);
+        em.persist(member1);
+        Account account1 = new Account("우리은행", "통장계좌번호", BigDecimal.valueOf(100000), member1);
+        em.persist(account1);
+        Celebrity celebrity1 = new Celebrity("BTS", "url1");
+        em.persist(celebrity1);
+        Saving saving1 = new Saving(
+                "울오빠들",
+                "적금계좌번호",
+                0,
+                LocalDateTime.now().plus(26, ChronoUnit.WEEKS),
+                BigDecimal.valueOf(10000),
+                account1,
+                member1,
+                celebrity1
+        );
+        em.persist(saving1);
+
+        //when
+        SavingAddRuleRequestDTO requestDTO = new SavingAddRuleRequestDTO(
+                "우리오빠 사진찍을때",
+                BigDecimal.valueOf(1000),
+                saving1.getSavingId()
+        );
+
+        SavingRuleDTO savingRuleDTO = savingService.addRule(requestDTO);
+
+        //then
+        assertThat(savingRuleDTO.getSavingRuleName()).isEqualTo("우리오빠 사진찍을때");
 
     }
 

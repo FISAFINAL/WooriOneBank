@@ -8,9 +8,15 @@ import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.saving.domain.entity.Celebrity;
 import com.fisa.woorionebank.saving.domain.entity.Saving;
+import com.fisa.woorionebank.saving.domain.entity.SavingRule;
+import com.fisa.woorionebank.saving.domain.requestdto.SavingAddRuleRequestDTO;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingCreateRequestDTO;
+import com.fisa.woorionebank.saving.domain.responsedto.RuleListDTO;
 import com.fisa.woorionebank.saving.domain.responsedto.SavingDTO;
+import com.fisa.woorionebank.saving.domain.responsedto.SavingListDTO;
+import com.fisa.woorionebank.saving.domain.responsedto.SavingRuleDTO;
 import com.fisa.woorionebank.saving.repository.celebrity.CelebrityRepository;
+import com.fisa.woorionebank.saving.repository.rule.SavingRuleRepository;
 import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
 import com.fisa.woorionebank.savinghistory.entity.SavingHistory;
 import com.fisa.woorionebank.savinghistory.entity.TransactionType;
@@ -23,7 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,6 +43,7 @@ public class SavingService {
     private final MemberRepository memberRepository;
     private final CelebrityRepository celebrityRepository;
     private final SavingHistoryRepository savingHistoryRepository;
+    private final SavingRuleRepository savingRuleRepository;
 
     /**
      * 최애 적금 생성
@@ -91,6 +100,56 @@ public class SavingService {
         return SavingDTO.fromEntity(savedSaving);
 
     }
+
+    /**
+     * 최애 적금 조회
+     */
+    public SavingListDTO findSavings() {
+
+    }
+
+
+    /**
+     * 최애 적금에 규칙 추가
+     * @param requestDTO
+     * @return
+     */
+    public SavingRuleDTO addRule(SavingAddRuleRequestDTO requestDTO) {
+
+        // 계좌 조회
+        final Saving saving = savingRepository.findById(requestDTO.getSavingId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Saving));
+
+        SavingRule savingRule = savingRuleRepository.save(SavingRule.of(
+                requestDTO.getSavingRuleName(),
+                requestDTO.getDepositAmount(),
+                saving
+        ));
+
+        return SavingRuleDTO.fromEntity(savingRule);
+    }
+
+    /**
+     * 최애 적금 규칙 조회
+     *
+     * @return
+     */
+    public RuleListDTO findRules(Long savingId) {
+        // 계좌 조회
+        final Saving saving = savingRepository.findById(savingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Saving));
+
+        List<SavingRule> ruleList = savingRuleRepository.findBySaving(saving);
+
+        // List<SavingRule> -> List<SavingRuleDTO> 변환
+        List<SavingRuleDTO> ruleDTOList = ruleList.stream()
+                .map(SavingRuleDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new RuleListDTO(ruleDTOList);
+    }
+
+
 
     public String generateUniqueAccountNumber() {
         while (true) {
