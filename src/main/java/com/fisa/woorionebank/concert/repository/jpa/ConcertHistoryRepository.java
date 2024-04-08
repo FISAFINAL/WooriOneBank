@@ -6,6 +6,7 @@ import com.fisa.woorionebank.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
+import java.util.Optional;
 
 public interface ConcertHistoryRepository extends JpaRepository<ConcertHistory, Long>, ConcertHistoryRepositoryCustom {
 
@@ -13,6 +14,6 @@ public interface ConcertHistoryRepository extends JpaRepository<ConcertHistory, 
     List<Member> findMemberByConcertId(Long concertId);
 
     @Query("select c from ConcertHistory c where c.member.memberId = ?1 and c.concert.concertId = ?2")
-    ConcertHistory findByMemberIdAndConcertId(Long memberId, Long concertId);
+    Optional<ConcertHistory> findByMemberIdAndConcertId(Long memberId, Long concertId);
 
 }

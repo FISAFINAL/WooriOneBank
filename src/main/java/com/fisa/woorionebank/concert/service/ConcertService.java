@@ -78,14 +78,19 @@ public class ConcertService {
 
     public void applyConcert(Member member, Long concertId) {
         Concert concert = concertRepository.findById(concertId).orElse(null);
+        Optional<ConcertHistory> c = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId);
 
-        ConcertHistory concertHistory = ConcertHistory.builder()
-                .status(Status.APPLY)
-                .member(member)
-                .concert(concert)
-                .build();
+        if (c.isEmpty()) {
+            ConcertHistory concertHistory = ConcertHistory.builder()
+                    .status(Status.APPLY)
+                    .member(member)
+                    .concert(concert)
+                    .build();
 
-        concertHistoryRepository.save(concertHistory);
+            concertHistoryRepository.save(concertHistory);
+        } else {
+            log.error("이미 콘서트를 응모한 회원입니다."); // TODO 추후 에러 처리
+        }
     }
 
     // 회원 등급을 가산점으로 변환하는 함수
@@ -185,7 +190,7 @@ public class ConcertService {
     public void reserveSeat(Member member, RequestSeatDTO seatDTO) {
         // concert_history의 좌석id(fk), 예매 일시 업데이트
         Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY());
-        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId());
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId()).orElse(null);
 
         concertHistory.reserve();
         concertHistory.setSeat(seat);
