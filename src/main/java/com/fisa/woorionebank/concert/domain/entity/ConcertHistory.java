@@ -52,6 +52,11 @@ public class ConcertHistory {
         this.ticketingDate = LocalDateTime.now();
     }
 
+    public void win(Area area) {
+        this.status = Status.WIN;
+        this.area = area;
+    }
+
     public static ConcertHistory createConcertHistory(ConcertHistoryDTO concertHistoryDTO){
         ConcertHistory concertHistory = new ConcertHistory();
         concertHistory.status = concertHistoryDTO.getStatus();
