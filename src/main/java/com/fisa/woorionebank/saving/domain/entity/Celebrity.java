@@ -22,7 +22,24 @@ public class Celebrity {
 
     private String celebrityUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "saving_id")
-    private Saving saving;
+    @Builder
+    public Celebrity(
+            String celebrityName,
+            String celebrityUrl
+    ) {
+        this.celebrityName = celebrityName;
+        this.celebrityUrl = celebrityUrl;
+    }
+
+    public static Celebrity of(
+            String celebrityName,
+            String celebrityUrl
+    ) {
+        return Celebrity.builder()
+                .celebrityName(celebrityName)
+                .celebrityUrl(celebrityUrl)
+                .build();
+    }
+
+
 }

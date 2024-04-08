@@ -1,6 +1,6 @@
 package com.fisa.woorionebank.member.service;
 
-import com.fisa.woorionebank.member.domain.dto.requestDto.registerDTO;
+import com.fisa.woorionebank.member.domain.dto.requestDto.RegisterDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class MemberService {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
-    public Member createMember(registerDTO registerDTO) {
+    public Member createMember(RegisterDTO registerDTO) {
         if (registerDTO == null) {
             throw new RuntimeException("Invalid arguments");
         }
