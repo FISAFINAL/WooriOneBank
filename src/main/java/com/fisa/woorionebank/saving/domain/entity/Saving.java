@@ -28,9 +28,6 @@ public class Saving extends BaseEntity {
 
     private String savingAccount; // 적금 계좌 번호
 
-//    @Enumerated(EnumType.STRING)
-//    private DepositDay depositDay; // 매주 납입 요일
-
     private int overdueWeek; // 연체 된 주
 
     private LocalDateTime endDate; // 적금 만기일
@@ -44,13 +41,6 @@ public class Saving extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    //양방향 끊음
-//    @OneToMany(mappedBy = "saving")
-//    private List<SavingHistory> savingHistoryList = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "saving")
-//    private List<SavingRule> savingRuleList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "celebrity_id")
@@ -100,5 +90,10 @@ public class Saving extends BaseEntity {
                 .build();
     }
 
+    //연관관계 메소드
+    public void setMember(Member member) {
+        this.member = member;
+        member.getSavings().add(this);
+    }
 
 }

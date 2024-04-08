@@ -60,10 +60,12 @@ public class SavingService {
         final Celebrity celebrity = celebrityRepository.findById(requestDTO.getCelebrityId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Celebrity));
 
-        // 자동이체 계좌 조회 - 계좌 번호와 MemberId로 조회
-        final Account account = accountRepository
-                .findByMemberIdAndAccountNumber(requestDTO.getMemberId(),requestDTO.getAccountNumber())
+        // 자동이체 계좌 조회 - Member 엔티티에서 직접 찾음 (양방향)
+        final Account account = member.getAccounts().stream()
+                .filter(acc -> acc.getAccountNumber().equals(requestDTO.getAccountNumber()))
+                .findFirst()
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Account));
+
 
         // 잔액 확인 - 계좌에 10,000 (생성비용) 보다 많아야함
         long creationCost = 10000L;
@@ -89,6 +91,8 @@ public class SavingService {
                 celebrity
         ));
 
+        member.addSaving(savedSaving);
+
         // 적금 입금 내역 기록 (생성 내역 기록)
         savingHistoryRepository.save(SavingHistory.of(
                 TransactionType.CREATION,
@@ -104,7 +108,18 @@ public class SavingService {
     /**
      * 최애 적금 조회
      */
+    public SavingListDTO findSavings(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Member));
 
+        List<Saving> savingList = member.getSavings();
+
+        List<SavingDTO> savingDTOList = savingList.stream()
+                .map(SavingDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new SavingListDTO(savingDTOList);
+    }
 
     /**
      * 최애 적금에 규칙 추가
@@ -145,7 +160,6 @@ public class SavingService {
 
         return new RuleListDTO(ruleDTOList);
     }
-
 
 
     public String generateUniqueAccountNumber() {
