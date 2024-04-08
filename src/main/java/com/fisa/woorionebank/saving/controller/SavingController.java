@@ -37,4 +37,10 @@ public class SavingController {
     public ResponseEntity<RuleListDTO> findRules(@PathVariable("savingId") Long savingId) {
         return ResponseEntity.ok(savingService.findRules(savingId));
     }
+
+    @PostMapping("/deposit/{ruleId}")
+    public ResponseEntity<SavingDTO> deposit(@PathVariable("ruleId") Long ruleId) {
+        return ResponseEntity.ok(savingService.deposit(ruleId));
+    }
+
 }
