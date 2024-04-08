@@ -1,10 +1,13 @@
 package com.fisa.woorionebank.saving.domain.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -19,10 +22,32 @@ public class SavingRule {
 
     private String savingRuleName;
 
-    private int depositAmount;
+    private BigDecimal depositAmount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "saving_id")
     private Saving saving;
 
+    @Builder
+    public SavingRule(
+            String savingRuleName,
+            BigDecimal depositAmount,
+            Saving saving
+    ) {
+        this.savingRuleName = savingRuleName;
+        this.depositAmount = depositAmount;
+        this.saving = saving;
+    }
+
+    public static SavingRule of(
+            String savingRuleName,
+            BigDecimal depositAmount,
+            Saving saving
+    ) {
+        return SavingRule.builder()
+                .savingRuleName(savingRuleName)
+                .depositAmount(depositAmount)
+                .saving(saving)
+                .build();
+    }
 }
