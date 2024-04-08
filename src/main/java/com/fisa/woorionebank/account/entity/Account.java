@@ -1,6 +1,8 @@
 package com.fisa.woorionebank.account.entity;
 
 import com.fisa.woorionebank.common.BaseEntity;
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
 import com.fisa.woorionebank.member.entity.Member;
 import lombok.*;
 
@@ -60,4 +62,15 @@ public class Account extends BaseEntity {
         this.member = member;
         member.getAccounts().add(this);
     }
+
+    // 잔액 감소 메서드
+    public void minus(BigDecimal amount) {
+        // 현재 잔액보다 출금액이 크면 예외 발생
+        if (this.balance.compareTo(amount) < 0) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
+        }
+        // 출금액을 잔액에서 차감
+        this.balance = this.balance.subtract(amount);
+    }
+
 }

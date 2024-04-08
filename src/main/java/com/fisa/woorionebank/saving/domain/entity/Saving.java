@@ -96,4 +96,7 @@ public class Saving extends BaseEntity {
         member.getSavings().add(this);
     }
 
+    public void plus(BigDecimal amount) {
+        this.totalAmount = this.totalAmount.add(amount);
+    }
 }
