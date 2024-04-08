@@ -2,10 +2,7 @@ package com.fisa.woorionebank.saving.controller;
 
 import com.fisa.woorionebank.saving.domain.requestdto.SavingAddRuleRequestDTO;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingCreateRequestDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.RuleListDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.SavingDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.SavingListDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.SavingRuleDTO;
+import com.fisa.woorionebank.saving.domain.responsedto.*;
 import com.fisa.woorionebank.saving.service.SavingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -43,4 +40,9 @@ public class SavingController {
         return ResponseEntity.ok(savingService.deposit(ruleId));
     }
 
+    @GetMapping("/history/{savingId}")
+    public ResponseEntity<SavingHistoryListDTO> findHistory(@PathVariable("savingId") Long savingId) {
+        return ResponseEntity.ok(savingService.findHistory(savingId));
+    }
+    
 }
