@@ -62,13 +62,13 @@ public class ConcertController {
     }
 
     /**
-     * 우리 원 더 스테이지 당첨 내역 확인
+     * 우리 원 더 스테이지 응모 당첨
      * */
     @GetMapping("/draw")
     public ResponseEntity<?> drawConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
         try {
-            ResponseDrawDTO responseDrawDTO = concertService.drawConcert(member, concertId);
-            return ResponseEntity.ok().body(responseDrawDTO);
+            concertService.drawConcert(member, concertId);
+            return ResponseEntity.noContent().build();
         } catch(Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
 
@@ -77,6 +77,23 @@ public class ConcertController {
                     .body(responseDTO);
         }
     }
+
+    /**
+     * 우리 원 더 스테이지 당첨 내역 확인
+     * */
+//    @GetMapping("/draw")
+//    public ResponseEntity<?> searchDrawResult(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+//        try {
+//            concertService.searchDrawResult(member, concertId);
+//            return ResponseEntity.noContent().build();
+//        } catch(Exception e) {
+//            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+//
+//            return ResponseEntity
+//                    .internalServerError()
+//                    .body(responseDTO);
+//        }
+//    }
 
     /**
      * 우리 원 더 스테이지 예매 좌석 조회
@@ -102,6 +119,20 @@ public class ConcertController {
     public ResponseEntity<?> reserveSeat(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
         try {
             concertService.reserveSeat(member, requestSeatDTO);
+            return ResponseEntity.noContent().build();
+        } catch(Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test(@AuthenticationPrincipal Member member) {
+        try {
+            concertService.test();
             return ResponseEntity.noContent().build();
         } catch(Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();

@@ -8,6 +8,8 @@ import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
+import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
@@ -28,6 +30,7 @@ public class ConcertService {
     private final ConcertHistoryRepository concertHistoryRepository;
     private final MemberRepository memberRepository;
     private final SeatRepository seatRepository;
+    private final SavingRepository savingRepository;
 
     public ResponseConcertDTO searchConcert(Long concertId) {
         Concert concert = concertRepository.findById(concertId).orElse(null);
@@ -108,14 +111,8 @@ public class ConcertService {
         return map.get(grade);
     }
 
-    public ResponseDrawDTO drawConcert(Member member, Long concertId) {
-        Concert concert = concertRepository.findById(concertId).orElse(null);
-
-        ResponseDrawDTO responseDrawDTO = new ResponseDrawDTO();
-        responseDrawDTO.setConcertName(concert.getConcertName());
-        responseDrawDTO.setMemberName(member.getName());
-        responseDrawDTO.setArea(Area.R); // TODO 좌석 당첨 로직을 짜야 합니다. R석(완료), A석, B석
-
+    @Transactional
+    public void drawConcert(Member member, Long concertId) {
         /* 좌석 당첨 로직 */
         // R석 우리카드 실적 높은 사람(1만)
         // A석 적금 가입 고객(3만)
@@ -153,17 +150,63 @@ public class ConcertService {
             int index = random.nextInt(winnerPool.size());
             winners.put(winnerPool.remove(index), 0);
 
-            // TODO ConcertHistory > status, area에 반영해줘야 한다.
         }
-        // end of R석 당첨 로직 : winners에 담겨 있음.
 
-        /* TODO A석 당첨자 뽑기 */
-        // R석 미당첨자도 A석의 winnersPool에 넣어줘야 한다.
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElse(null);
+        concertHistory.win(Area.R);
 
-        /* TODO B석 당첨자 뽑기 */
+        concertHistoryRepository.save(concertHistory);
+        // end of R석 당첨 로직
 
+        /* A석 당첨자 뽑기 */
+        List<ConcertHistory> concertHistories = concertHistoryRepository.findByStatusAndConcertId(Status.APPLY, concertId);
 
-        return responseDrawDTO;
+        // 만약 apply인 사람들이 없으면 이미 전원 R석 당첨입니다.
+        if(!concertHistories.isEmpty()) {
+            winners = new HashMap<>();
+            winnerPool = new ArrayList<>();
+            random = new Random();
+
+            // 랜덤으로 A석 당첨자 선발
+            for (int i = 0; i < seatAvailableA && !winnerPool.isEmpty(); i++) {
+                concertHistories.get(i).getMember().getMemberId();
+
+                // 적금 가입한 사용자만 선발한다.
+                Optional<Long> saving = savingRepository.findByMemberId(1L);
+                if(!saving.isEmpty()) {
+                    int index = random.nextInt(winnerPool.size());
+                    winners.put(winnerPool.remove(index), 0);
+                }
+            }
+
+            ConcertHistory concertHistoryA = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElse(null);
+            concertHistoryA.win(Area.A);
+
+            concertHistoryRepository.save(concertHistory);
+        }
+        // end of A석 당첨
+
+        /* B석 당첨자 뽑기 */
+        List<ConcertHistory> concertHistoriesB = concertHistoryRepository.findByStatusAndConcertId(Status.APPLY, concertId);
+
+        // 만약 apply인 사람들이 없으면 이미 전원 R석, A석 당첨입니다.
+        if(!concertHistoriesB.isEmpty()) {
+            winners = new HashMap<>();
+            winnerPool = new ArrayList<>();
+            random = new Random();
+
+            // 랜덤으로 B석 당첨자 선발
+            for (int i = 0; i < seatAvailableB && !winnerPool.isEmpty(); i++) {
+                int index = random.nextInt(winnerPool.size());
+                winners.put(winnerPool.remove(index), 0);
+            }
+
+            ConcertHistory concertHistoryB = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElse(null);
+            concertHistoryB.win(Area.B);
+
+            concertHistoryRepository.save(concertHistory);
+        }
+        // end of B석 당첨
     }
 
     public List<ResponseSeatDTO> selectSeat(Long concertId) {
@@ -195,6 +238,16 @@ public class ConcertService {
         concertHistory.reserve();
         concertHistory.setSeat(seat);
 
+        // TODO 이미 선택된 좌석 처리
+
         concertHistoryRepository.save(concertHistory);
+    }
+
+    public void test() {
+        Optional<Long> s = savingRepository.findByMemberId(1L);
+
+        log.info("{}", savingRepository.findByMemberId(1L));
+
+
     }
 }
