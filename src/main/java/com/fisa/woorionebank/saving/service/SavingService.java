@@ -104,9 +104,6 @@ public class SavingService {
     /**
      * 최애 적금 조회
      */
-    public SavingListDTO findSavings() {
-
-    }
 
 
     /**
