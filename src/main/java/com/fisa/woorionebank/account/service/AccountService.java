@@ -25,6 +25,7 @@ public class AccountService {
 
     private final MemberRepository memberRepository;
 
+    //아직은 테스트를 위한 것! 편의를 위해 Entity가 그대로 반환되도록 놔두었습니다.
     public Account createAccount(Long memberId, String bankName) {
         //회원 조회
         final Member member = memberRepository.findById(memberId)

@@ -52,7 +52,7 @@ public class Saving extends BaseEntity {
 //    @OneToMany(mappedBy = "saving")
 //    private List<SavingRule> savingRuleList = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "celebrity_id")
     private Celebrity celebrity;
 

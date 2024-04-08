@@ -62,4 +62,12 @@ public class Member extends BaseEntity {
         accounts.add(account);
     }
 
+    public Member(String loginId, String password, String name, int age, String email, Grade grade) {
+        this.loginId = loginId;
+        this.password = password;
+        this.name = name;
+        this.age = age;
+        this.email = email;
+        this.grade = grade;
+    }
 }
