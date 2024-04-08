@@ -11,10 +11,7 @@ import com.fisa.woorionebank.saving.domain.entity.Saving;
 import com.fisa.woorionebank.saving.domain.entity.SavingRule;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingAddRuleRequestDTO;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingCreateRequestDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.RuleListDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.SavingDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.SavingListDTO;
-import com.fisa.woorionebank.saving.domain.responsedto.SavingRuleDTO;
+import com.fisa.woorionebank.saving.domain.responsedto.*;
 import com.fisa.woorionebank.saving.repository.celebrity.CelebrityRepository;
 import com.fisa.woorionebank.saving.repository.rule.SavingRuleRepository;
 import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
@@ -193,6 +190,27 @@ public class SavingService {
         return SavingDTO.fromEntity(saving);
 
     }
+
+    /**
+     * 최애적금 입금내역 조회
+     *
+     * @return
+     */
+    public SavingHistoryListDTO findHistory(Long savingId) {
+
+        final Saving saving = savingRepository.findById(savingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Saving));
+
+        List<SavingHistory> ruleList = savingHistoryRepository.findBySaving(saving);
+
+        List<SavingHistoryDTO> historyDTOList = ruleList.stream()
+                .map(SavingHistoryDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new SavingHistoryListDTO(historyDTOList);
+
+    }
+
 
 
     public String generateUniqueAccountNumber() {

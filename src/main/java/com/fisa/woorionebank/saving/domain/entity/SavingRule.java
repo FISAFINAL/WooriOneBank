@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.saving.domain.entity;
 
+import com.fisa.woorionebank.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Table(name = "saving_rule")
 @Entity
-public class SavingRule {
+public class SavingRule extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
