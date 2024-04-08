@@ -17,6 +17,7 @@ import com.fisa.woorionebank.seat.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -207,6 +208,19 @@ public class ConcertService {
             concertHistoryRepository.save(concertHistory);
         }
         // end of B석 당첨
+    }
+
+    @Transactional
+    public ResponseDrawDTO searchDrawResult(Member member, Long concertId) {
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
+                .orElseThrow(() -> new NotFoundException("Concert history not found"));
+
+        ResponseDrawDTO responseDrawDTO = new ResponseDrawDTO();
+        responseDrawDTO.setConcertName(concertHistory.getConcert().getConcertName());
+        responseDrawDTO.setMemberName(member.getName());
+        responseDrawDTO.setArea(concertHistory.getArea());
+
+        return responseDrawDTO;
     }
 
     public List<ResponseSeatDTO> selectSeat(Long concertId) {

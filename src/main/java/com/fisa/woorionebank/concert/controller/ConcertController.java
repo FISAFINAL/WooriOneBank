@@ -81,19 +81,19 @@ public class ConcertController {
     /**
      * 우리 원 더 스테이지 당첨 내역 확인
      * */
-//    @GetMapping("/draw")
-//    public ResponseEntity<?> searchDrawResult(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
-//        try {
-//            concertService.searchDrawResult(member, concertId);
-//            return ResponseEntity.noContent().build();
-//        } catch(Exception e) {
-//            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-//
-//            return ResponseEntity
-//                    .internalServerError()
-//                    .body(responseDTO);
-//        }
-//    }
+    @GetMapping("/draw/result")
+    public ResponseEntity<?> searchDrawResult(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+        try {
+            ResponseDrawDTO responseDrawDTO = concertService.searchDrawResult(member, concertId);
+            return ResponseEntity.ok().body(responseDrawDTO);
+        } catch(Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
+    }
 
     /**
      * 우리 원 더 스테이지 예매 좌석 조회
