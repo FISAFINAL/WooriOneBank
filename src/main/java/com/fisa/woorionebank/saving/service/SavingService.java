@@ -63,6 +63,8 @@ public class SavingService {
                 .findFirst()
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Account));
 
+//        final Account account1 = accountRepository.findByMember(member)
+
 
         // 잔액 확인 - 계좌에 10,000 (생성비용) 보다 많아야함
         BigDecimal creationCost = BigDecimal.valueOf(10000);

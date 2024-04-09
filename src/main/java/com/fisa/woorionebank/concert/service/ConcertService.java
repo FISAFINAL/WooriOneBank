@@ -1,5 +1,7 @@
 package com.fisa.woorionebank.concert.service;
 
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.domain.entity.*;
@@ -17,15 +19,16 @@ import com.fisa.woorionebank.seat.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ConcertService {
     private final ConcertRepository concertRepository;
     private final ConcertHistoryRepository concertHistoryRepository;
@@ -34,7 +37,10 @@ public class ConcertService {
     private final SavingRepository savingRepository;
 
     public ResponseConcertDTO searchConcert(Long concertId) {
-        Concert concert = concertRepository.findById(concertId).orElse(null);
+//        Concert concert = concertRepository.findById(concertId).orElse(null);
+
+        final Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
 
         /*
          * 공연 이벤트 기간 계산 로직
@@ -63,37 +69,56 @@ public class ConcertService {
             period = PeriodType.NONE; // 공연 이벤트 기간이 아님.
         }
 
-        ResponseConcertDTO concertDTO = new ResponseConcertDTO();
-        concertDTO.setConcertName(concert.getConcertName());
-        concertDTO.setStartDate(startDate);
-        concertDTO.setEndDate(endDate);
-        concertDTO.setCheckDate(checkDate);
-        concertDTO.setTicketingDate(ticketingDate);
-        concertDTO.setConcertDate(concertDate);
-        concertDTO.setRunningTime(concert.getRunningTime());
-        concertDTO.setAgeLimit(concert.getAgeLimit());
-        concertDTO.setLineup(concert.getLineup());
-        concertDTO.setDrawInfo(concert.getDrawInfo());
-        concertDTO.setCurrent(period);
+//        ResponseConcertDTO concertDTO = new ResponseConcertDTO();
+//        concertDTO.setConcertName(concert.getConcertName());
+//        concertDTO.setStartDate(startDate);
+//        concertDTO.setEndDate(endDate);
+//        concertDTO.setCheckDate(checkDate);
+//        concertDTO.setTicketingDate(ticketingDate);
+//        concertDTO.setConcertDate(concertDate);
+//        concertDTO.setRunningTime(concert.getRunningTime());
+//        concertDTO.setAgeLimit(concert.getAgeLimit());
+//        concertDTO.setLineup(concert.getLineup());
+//        concertDTO.setDrawInfo(concert.getDrawInfo());
+//        concertDTO.setCurrent(period);
+
+        ResponseConcertDTO concertDTO = ResponseConcertDTO.fromEntity(concert);
 
         return concertDTO;
     }
 
+    @Transactional
     public void applyConcert(Member member, Long concertId) {
-        Concert concert = concertRepository.findById(concertId).orElse(null);
-        Optional<ConcertHistory> c = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId);
+        final Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
 
-        if (c.isEmpty()) {
-            ConcertHistory concertHistory = ConcertHistory.builder()
-                    .status(Status.APPLY)
-                    .member(member)
-                    .concert(concert)
-                    .build();
+//        Optional<ConcertHistory> c = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId);
+//
+//        if (c.isEmpty()) {
+//            ConcertHistory concertHistory = ConcertHistory.builder()
+//                    .status(Status.APPLY)
+//                    .member(member)
+//                    .concert(concert)
+//                    .build();
+//
+//            concertHistoryRepository.save(concertHistory);
+//        } else {
+//            log.error("이미 콘서트를 응모한 회원입니다."); // TODO 추후 에러 처리
+//        }
 
-            concertHistoryRepository.save(concertHistory);
-        } else {
-            log.error("이미 콘서트를 응모한 회원입니다."); // TODO 추후 에러 처리
-        }
+        concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
+                .ifPresentOrElse(
+                        (c) -> log.error("이미 콘서트를 응모한 회원입니다."), // 커스텀 에러
+                        () -> { // 기록이 없을 경우
+                            ConcertHistory concertHistory = ConcertHistory.builder()
+                                    .status(Status.APPLY)
+                                    .member(member)
+                                    .concert(concert)
+                                    .build();
+                            concertHistoryRepository.save(concertHistory);
+                        }
+                );
+
     }
 
     // 회원 등급을 가산점으로 변환하는 함수

@@ -15,4 +15,6 @@ public class ResponseDrawDTO {
     private String memberName;
 
     private Area area;
+
+//    public static ResponseDrawDTO fromEntity()
 }

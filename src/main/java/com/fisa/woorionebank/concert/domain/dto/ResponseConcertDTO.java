@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.concert.domain.dto;
 
+import com.fisa.woorionebank.concert.domain.entity.Concert;
 import com.fisa.woorionebank.concert.domain.entity.PeriodType;
 import lombok.*;
 
@@ -8,7 +9,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 public class ResponseConcertDTO {
@@ -39,5 +39,13 @@ public class ResponseConcertDTO {
     private String drawInfo; // 당첨 기준에 관한 정보
 
     private PeriodType current; // 현재 시점(지금이 응모 기간인지 체크하기 위함)
+
+    public static ResponseConcertDTO fromEntity(Concert concert) {
+        return ResponseConcertDTO.builder()
+                .concertName(concert.getConcertName())
+
+                // 파라메타 정의
+                .build();
+    }
 
 }
