@@ -229,6 +229,9 @@ public class ConcertService {
         List<ResponseSeatDTO> seats = new ArrayList<>();
 
         for (Long seatId : seatsIdList) {
+            // 좌석 조회 시 이미 예매가 완료된 좌석(선택 불가), 예매가 가능한 좌석 나누기
+            Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seatId, concertId);
+
             Optional<Seat> seatOptional = seatRepository.findById(seatId);
             seatOptional.ifPresent(seat -> {
                 ResponseSeatDTO responseSeatDTO = new ResponseSeatDTO();
@@ -236,6 +239,13 @@ public class ConcertService {
                 responseSeatDTO.setSeatNumber(seat.getSeatNumber());
                 responseSeatDTO.setSeatX(seat.getSeatX());
                 responseSeatDTO.setSeatY(seat.getSeatY());
+
+                if(c.isEmpty()) {
+                    // 좌석 예매 가능
+                    responseSeatDTO.setReserved(false);
+                } else {
+                    responseSeatDTO.setReserved(true);
+                }
                 seats.add(responseSeatDTO);
             });
         }
@@ -266,7 +276,5 @@ public class ConcertService {
         Optional<Long> s = savingRepository.findByMemberId(1L);
 
         log.info("{}", savingRepository.findByMemberId(1L));
-
-
     }
 }
