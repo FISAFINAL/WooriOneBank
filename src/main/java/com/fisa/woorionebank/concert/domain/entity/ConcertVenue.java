@@ -29,10 +29,18 @@ public class ConcertVenue {
 
     private int capacity;
 
+    @Builder.Default
     @OneToMany(mappedBy = "concertVenue")
     private List<Concert> concerts = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "concertVenue")
     private List<Seat> seats = new ArrayList<>();
 
+    public ConcertVenue(Long concertVenueId, String venueName, String venueAddress, int capacity) {
+        this.concertVenueId = concertVenueId;
+        this.venueName = venueName;
+        this.venueAddress = venueAddress;
+        this.capacity = capacity;
+    }
 }

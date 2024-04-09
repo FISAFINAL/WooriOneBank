@@ -23,8 +23,6 @@ public class Concert {
 
     private String concertName; // 공연 제목
 
-    private String location; // 공연 개최 장소
-
     private LocalDateTime startDate; // 공연 응모 시작일
 
     private LocalDateTime endDate; // 공연 응모 마감일
@@ -51,9 +49,7 @@ public class Concert {
 
     public static Concert createConcert(ConcertDTO concertDTO){
         Concert concert = new Concert();
-        concert.concertId = concertDTO.getConcertId();
         concert.concertName = concertDTO.getConcertName();
-        concert.location = concertDTO.getLocation();
         concert.startDate = concertDTO.getStartDate();
         concert.endDate = concertDTO.getEndDate();
         concert.checkDate = concertDTO.getCheckDate();

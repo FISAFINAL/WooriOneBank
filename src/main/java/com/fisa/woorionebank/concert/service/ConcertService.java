@@ -65,7 +65,6 @@ public class ConcertService {
 
         ResponseConcertDTO concertDTO = new ResponseConcertDTO();
         concertDTO.setConcertName(concert.getConcertName());
-        concertDTO.setLocation(concert.getLocation());
         concertDTO.setStartDate(startDate);
         concertDTO.setEndDate(endDate);
         concertDTO.setCheckDate(checkDate);
