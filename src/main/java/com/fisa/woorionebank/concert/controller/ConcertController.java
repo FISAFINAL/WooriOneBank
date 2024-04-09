@@ -65,9 +65,9 @@ public class ConcertController {
      * 우리 원 더 스테이지 응모 당첨
      * */
     @GetMapping("/draw")
-    public ResponseEntity<?> drawConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+    public ResponseEntity<?> drawConcert(@RequestParam Long concertId) {
         try {
-            concertService.drawConcert(member, concertId);
+            concertService.drawConcert(concertId);
             return ResponseEntity.noContent().build();
         } catch(Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();

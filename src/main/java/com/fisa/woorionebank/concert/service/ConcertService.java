@@ -105,15 +105,15 @@ public class ConcertService {
         Grade[] grades = Grade.values();
         int len = Grade.values().length;
 
-        for (int i = len; i > 0; i--) {
-            map.put(grades[i], i);
+        for (int i = 0; i < len; i++) {
+            map.put(grades[i], len - i);
         }
 
         return map.get(grade);
     }
 
     @Transactional
-    public void drawConcert(Member member, Long concertId) {
+    public void drawConcert(Long concertId) {
         /* 좌석 당첨 로직 */
         // R석 우리카드 실적 높은 사람(1만)
         // A석 적금 가입 고객(3만)
@@ -132,7 +132,7 @@ public class ConcertService {
 
         /* R석 당첨자 뽑기 */
         // 회원 등급을 가산점으로 변환하기
-        Map<Member, Integer> winners = new HashMap<>();
+        Map<Integer, Member> winners = new HashMap<>();
         List<Member> winnerPool = new ArrayList<>();
 
         for (Member m : memberList) {
@@ -140,23 +140,28 @@ public class ConcertService {
 
             // 우승자 풀에 추가 (가산점만큼 여러 번 추가)
             for (int i = 0; i < point; i++) {
-                winnerPool.add(member);
+                winnerPool.add(m);
             }
         }
 
         Random random = new Random();
 
-        // 랜덤으로 R석 당첨자 선발
-        for (int i = 0; i < seatAvailableR && !winnerPool.isEmpty(); i++) {
-            int index = random.nextInt(winnerPool.size());
-            winners.put(winnerPool.remove(index), 0);
+        int numWinnersR = Math.min(seatAvailableR, memberList.size());
 
+        // 랜덤으로 R석 당첨자 선발
+        for (int i = 0; i < numWinnersR && !winnerPool.isEmpty(); i++) {
+            int index = random.nextInt(winnerPool.size());
+            winners.put(0, winnerPool.remove(index));
         }
 
-        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElse(null);
-        concertHistory.win(Area.R);
+        for (Member winner : winners.values()) {
+            ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
 
-        concertHistoryRepository.save(concertHistory);
+            if (concertHistory != null) {
+                concertHistory.win(Area.R);
+                concertHistoryRepository.save(concertHistory);
+            }
+        }
         // end of R석 당첨 로직
 
         /* A석 당첨자 뽑기 */
@@ -168,22 +173,26 @@ public class ConcertService {
             winnerPool = new ArrayList<>();
             random = new Random();
 
-            // 랜덤으로 A석 당첨자 선발
-            for (int i = 0; i < seatAvailableA && !winnerPool.isEmpty(); i++) {
-                concertHistories.get(i).getMember().getMemberId();
+            int numWinnersA = Math.min(seatAvailableA, concertHistories.size());
 
+            // 랜덤으로 A석 당첨자 선발
+            for (int i = 0; i < numWinnersA && !winnerPool.isEmpty(); i++) {
                 // 적금 가입한 사용자만 선발한다.
-                Optional<Long> saving = savingRepository.findByMemberId(1L);
+                Optional<Long> saving = savingRepository.findByMemberId(concertHistories.get(i).getMember().getMemberId());
                 if(!saving.isEmpty()) {
                     int index = random.nextInt(winnerPool.size());
-                    winners.put(winnerPool.remove(index), 0);
+                    winners.put(0, winnerPool.remove(index));
                 }
             }
 
-            ConcertHistory concertHistoryA = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElse(null);
-            concertHistoryA.win(Area.A);
+            for (Member winner : winners.values()) {
+                ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
 
-            concertHistoryRepository.save(concertHistory);
+                if (concertHistory != null) {
+                    concertHistory.win(Area.A);
+                    concertHistoryRepository.save(concertHistory);
+                }
+            }
         }
         // end of A석 당첨
 
@@ -196,16 +205,22 @@ public class ConcertService {
             winnerPool = new ArrayList<>();
             random = new Random();
 
+            int numWinnersB = Math.min(seatAvailableB, concertHistoriesB.size());
+
             // 랜덤으로 B석 당첨자 선발
-            for (int i = 0; i < seatAvailableB && !winnerPool.isEmpty(); i++) {
+            for (int i = 0; i < numWinnersB && !winnerPool.isEmpty(); i++) {
                 int index = random.nextInt(winnerPool.size());
-                winners.put(winnerPool.remove(index), 0);
+                winners.put(0, winnerPool.remove(index));
             }
 
-            ConcertHistory concertHistoryB = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElse(null);
-            concertHistoryB.win(Area.B);
+            for (Member winner : winners.values()) {
+                ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
 
-            concertHistoryRepository.save(concertHistory);
+                if (concertHistory != null) {
+                    concertHistory.win(Area.B);
+                    concertHistoryRepository.save(concertHistory);
+                }
+            }
         }
         // end of B석 당첨
     }
