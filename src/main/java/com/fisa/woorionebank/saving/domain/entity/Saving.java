@@ -29,6 +29,7 @@ public class Saving extends BaseEntity {
     private String savingAccount; // 적금 계좌 번호
 
     private int overdueWeek; // 연체 된 주
+    private int currentWeek; // 현재 주차
 
     private LocalDateTime endDate; // 적금 만기일
 
@@ -51,6 +52,7 @@ public class Saving extends BaseEntity {
             String savingName,
             String savingAccount,
             int overdueWeek,
+            int currentWeek,
             LocalDateTime endDate,
             BigDecimal totalAmount,
             Account account,
@@ -60,6 +62,7 @@ public class Saving extends BaseEntity {
         this.savingName = savingName;
         this.savingAccount = savingAccount;
         this.overdueWeek = overdueWeek;
+        this.currentWeek = currentWeek;
         this.endDate = endDate;
         this.totalAmount = totalAmount;
         this.account = account;
@@ -72,6 +75,7 @@ public class Saving extends BaseEntity {
             String savingName,
             String savingAccount,
             int overdueWeek,
+            int currentWeek,
             LocalDateTime endDate,
             BigDecimal totalAmount,
             Account account,
@@ -82,6 +86,7 @@ public class Saving extends BaseEntity {
                 .savingName(savingName)
                 .savingAccount(savingAccount)
                 .overdueWeek(overdueWeek)
+                .currentWeek(currentWeek)
                 .endDate(endDate)
                 .totalAmount(totalAmount)
                 .account(account)
@@ -98,5 +103,13 @@ public class Saving extends BaseEntity {
 
     public void plus(BigDecimal amount) {
         this.totalAmount = this.totalAmount.add(amount);
+    }
+
+    public void updateCurrentWeek(int days) {
+        this.currentWeek += days;
+    }
+
+    public void setOverdueWeek(int overdueWeek) {
+        this.overdueWeek = overdueWeek;
     }
 }

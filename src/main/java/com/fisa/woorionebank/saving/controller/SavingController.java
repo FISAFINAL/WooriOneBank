@@ -37,12 +37,14 @@ public class SavingController {
 
     @PostMapping("/deposit/{ruleId}")
     public ResponseEntity<SavingDTO> deposit(@PathVariable("ruleId") Long ruleId) {
-        return ResponseEntity.ok(savingService.deposit(ruleId));
+        return ResponseEntity.ok(savingService.ruleDeposit(ruleId));
     }
 
     @GetMapping("/history/{savingId}")
     public ResponseEntity<SavingHistoryListDTO> findHistory(@PathVariable("savingId") Long savingId) {
         return ResponseEntity.ok(savingService.findHistory(savingId));
     }
+
+
     
 }
