@@ -247,14 +247,19 @@ public class ConcertService {
     public void reserveSeat(Member member, RequestSeatDTO seatDTO) {
         // concert_history의 좌석id(fk), 예매 일시 업데이트
         Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY());
-        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId()).orElse(null);
 
-        concertHistory.reserve();
-        concertHistory.setSeat(seat);
+        // 이미 선택된 좌석 처리
+        Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId());
 
-        // TODO 이미 선택된 좌석 처리
+        if(c.isEmpty()) {
+            ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId()).orElse(null);
 
-        concertHistoryRepository.save(concertHistory);
+            concertHistory.reserve();
+            concertHistory.setSeat(seat);
+            concertHistoryRepository.save(concertHistory);
+        } else {
+            log.error("이미 선택된 좌석입니다."); // TODO 추후 에러 처리
+        }
     }
 
     public void test() {
