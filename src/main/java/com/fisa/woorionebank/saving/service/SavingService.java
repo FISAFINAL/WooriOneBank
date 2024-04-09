@@ -67,10 +67,6 @@ public class SavingService {
         // 잔액 확인 - 계좌에 10,000 (생성비용) 보다 많아야함
         BigDecimal creationCost = BigDecimal.valueOf(10000);
 
-        if (account.getBalance().compareTo(creationCost) < 0) {
-            throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
-        }
-
         // 자동이체 계좌에서 생성비용 (10,000원) 차감
         account.minus(creationCost);
 
@@ -80,6 +76,7 @@ public class SavingService {
                 requestDTO.getSavingName(),
                 savingAccount,
                 0,
+                1,
                 LocalDateTime.now().plus(26, ChronoUnit.WEEKS),
                 creationCost,
                 account,
@@ -163,7 +160,7 @@ public class SavingService {
      *
      * @return
      */
-    public SavingDTO deposit(Long savingRuleId) {
+    public SavingDTO ruleDeposit(Long savingRuleId) {
 
         // 규칙 조회
         final SavingRule savingRule = savingRuleRepository.findById(savingRuleId)
@@ -190,6 +187,7 @@ public class SavingService {
         return SavingDTO.fromEntity(saving);
 
     }
+
 
     /**
      * 최애적금 입금내역 조회
