@@ -14,4 +14,5 @@ public class ResponseSeatDTO {
     private String seatNumber;
     private int seatX;
     private int seatY;
+    private boolean isReserved;
 }

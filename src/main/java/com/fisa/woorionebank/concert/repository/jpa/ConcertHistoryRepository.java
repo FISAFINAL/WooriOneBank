@@ -20,4 +20,7 @@ public interface ConcertHistoryRepository extends JpaRepository<ConcertHistory, 
     @Query("SELECT c FROM ConcertHistory c JOIN FETCH c.concert WHERE c.status = :status and c.concert.concertId = :concertId")
     List<ConcertHistory> findByStatusAndConcertId(Status status, Long concertId);
 
+    @Query("select c from ConcertHistory c where c.seat.seatId = ?1 and c.concert.concertId = ?2")
+    Optional<ConcertHistory> findBySeatIdAndConcertId(Long seatId, Long concertId);
+
 }
