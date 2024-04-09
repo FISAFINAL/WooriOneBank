@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class ConcertDTO {
-    private Long concertId;
-
     private String concertName; // 공연 제목
 
     private String location; // 공연 개최 장소
