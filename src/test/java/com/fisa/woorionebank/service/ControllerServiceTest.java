@@ -13,6 +13,7 @@ import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.concert.service.ConcertService;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ControllerServiceTest {
     @Autowired
     private ConcertHistoryRepository concertHistoryRepository;
+    @Autowired
+    private MemberRepository memberRepository;
     @Autowired
     private ConcertService concertService;
 
@@ -108,8 +111,9 @@ public class ControllerServiceTest {
     @Test
     public void 공연당첨조회() throws Exception {
         // given
-        Member member = new Member("ID1", "PW1", "박예린", 25, "email1@naver.com", Grade.VVIP);
-        em.merge(member);
+//        Member member = new Member("ID1", "PW1", "박예린", 25, "email1@naver.com", Grade.VVIP);
+//        em.merge(member);
+        Member member = memberRepository.findById(1L).orElse(null);
 
         // when
         ResponseDrawDTO responseDrawDTO = concertService.searchDrawResult(member, 1L);
@@ -124,14 +128,15 @@ public class ControllerServiceTest {
         List<ResponseSeatDTO> seats = concertService.selectSeat(1L);
 
         // then
-        assertThat(seats.get(0).getSeatNumber()).isEqualTo("1");
+        assertThat(seats.get(0).getSeatNumber()).isEqualTo("1열 1");
     }
 
     @Test
     public void 공연좌석예매() throws Exception {
         // given
-        Member member = new Member("ID1", "PW1", "박예린", 25, "email1@naver.com", Grade.VVIP);
-        em.merge(member);
+//        Member member = new Member("ID1", "PW1", "박예린", 25, "email1@naver.com", Grade.VVIP);
+//        em.merge(member);
+        Member member = memberRepository.findById(1L).orElse(null);
 
         RequestSeatDTO requestSeatDTO = RequestSeatDTO.builder()
                 .concertId(1L)
