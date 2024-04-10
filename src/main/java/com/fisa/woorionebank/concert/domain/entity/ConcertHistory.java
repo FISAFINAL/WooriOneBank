@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
+import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.entity.Seat;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "concert_history")
 @Entity
-public class ConcertHistory {
+public class ConcertHistory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "concert_reservation_id")
@@ -43,25 +44,42 @@ public class ConcertHistory {
     @JoinColumn(name = "concert_id")
     private Concert concert;
 
-    public void setSeat(Seat seat) {
-        this.seat = seat;
-    }
-
-    public void reserve() {
-        this.status = Status.SUCCESS;
-        this.ticketingDate = LocalDateTime.now();
-    }
-
     public void win(Area area) {
         this.status = Status.WIN;
         this.area = area;
     }
 
-    public static ConcertHistory createConcertHistory(ConcertHistoryDTO concertHistoryDTO){
+    public ConcertHistory apply(Status apply, Member member, Concert concert) {
+        this.status = apply;
+        this.member = member;
+        this.concert = concert;
+
+        return this;
+    }
+
+    public static ConcertHistory saveConcertHistory(ConcertHistoryDTO concertHistoryDTO){
         ConcertHistory concertHistory = new ConcertHistory();
         concertHistory.status = concertHistoryDTO.getStatus();
         concertHistory.member = concertHistoryDTO.getMember();
         concertHistory.concert = concertHistoryDTO.getConcert();
         return concertHistory;
+    }
+
+    public static ConcertHistory of(
+        Status status,
+        Area area,
+        LocalDateTime ticketingDate,
+        Member member,
+        Seat seat,
+        Concert concert
+    ) {
+        return ConcertHistory.builder()
+                .status(status)
+                .area(area)
+                .ticketingDate(ticketingDate)
+                .member(member)
+                .seat(seat)
+                .concert(concert)
+                .build();
     }
 }

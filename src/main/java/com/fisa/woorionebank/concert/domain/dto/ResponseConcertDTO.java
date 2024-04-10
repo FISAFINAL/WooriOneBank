@@ -1,7 +1,8 @@
 package com.fisa.woorionebank.concert.domain.dto;
 
-import com.fisa.woorionebank.concert.domain.entity.Concert;
-import com.fisa.woorionebank.concert.domain.entity.PeriodType;
+import com.fisa.woorionebank.concert.domain.entity.*;
+import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.seat.entity.Seat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,8 +18,6 @@ public class ResponseConcertDTO {
      * 현재 시점(지금이 응모 기간인지 체크하기 위함)
      * */
     private String concertName;
-
-    private String location;
 
     private LocalDateTime startDate;
 
@@ -40,11 +39,19 @@ public class ResponseConcertDTO {
 
     private PeriodType current; // 현재 시점(지금이 응모 기간인지 체크하기 위함)
 
-    public static ResponseConcertDTO fromEntity(Concert concert) {
+    public static ResponseConcertDTO fromEntity(Concert concert, PeriodType period) {
         return ResponseConcertDTO.builder()
                 .concertName(concert.getConcertName())
-
-                // 파라메타 정의
+                .startDate(concert.getStartDate())
+                .endDate(concert.getEndDate())
+                .checkDate(concert.getCheckDate())
+                .ticketingDate(concert.getTicketingDate())
+                .concertDate(concert.getConcertDate())
+                .runningTime(concert.getRunningTime())
+                .ageLimit(concert.getAgeLimit())
+                .lineup(concert.getLineup())
+                .drawInfo(concert.getDrawInfo())
+                .current(period)
                 .build();
     }
 

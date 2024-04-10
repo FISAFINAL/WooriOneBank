@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
+import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "concert")
 @Entity
-public class Concert {
+public class Concert extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "concert_id")

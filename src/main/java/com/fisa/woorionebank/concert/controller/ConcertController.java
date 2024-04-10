@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.concert.controller;
 
+import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.concert.domain.dto.RequestDrawDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
@@ -29,36 +30,16 @@ public class ConcertController {
      * 우리 원 더 스테이지 공연 정보 조회
      * */
     @GetMapping("")
-    public ResponseEntity<?> searchConcert(@RequestParam Long concertId) {
-        try {
-            ResponseConcertDTO concertDTO = concertService.searchConcert(concertId);
-            return ResponseEntity.ok().body(concertDTO);
-        }
-        catch(Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError()
-                    .body(responseDTO);
-        }
+    public ResponseEntity<ResponseConcertDTO> searchConcert(@RequestParam Long concertId) {
+        return ResponseEntity.ok().body(concertService.searchConcert(concertId));
     }
 
     /**
      * 우리 원 더 스테이지 응모
      * */
     @PostMapping("/apply")
-    public ResponseEntity<?> applyConcert(@AuthenticationPrincipal Member member, @RequestBody RequestDrawDTO requestDrawDTO) {
-        try {
-            concertService.applyConcert(member, requestDrawDTO.getConcertId());
-            return ResponseEntity.noContent().build();
-        }
-        catch(Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError()
-                    .body(responseDTO);
-        }
+    public ResponseEntity<ConcertHistoryDTO> applyConcert(@AuthenticationPrincipal Member member, @RequestBody RequestDrawDTO requestDrawDTO) {
+        return ResponseEntity.ok().body(concertService.applyConcert(member, requestDrawDTO.getConcertId()));
     }
 
     /**
@@ -66,16 +47,8 @@ public class ConcertController {
      * */
     @GetMapping("/draw")
     public ResponseEntity<?> drawConcert(@RequestParam Long concertId) {
-        try {
-            concertService.drawConcert(concertId);
-            return ResponseEntity.noContent().build();
-        } catch(Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError()
-                    .body(responseDTO);
-        }
+//        return ResponseEntity.ok().body(concertService.drawConcert(concertId));
+        return null;
     }
 
     /**
@@ -83,16 +56,7 @@ public class ConcertController {
      * */
     @GetMapping("/draw/result")
     public ResponseEntity<?> searchDrawResult(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
-        try {
-            ResponseDrawDTO responseDrawDTO = concertService.searchDrawResult(member, concertId);
-            return ResponseEntity.ok().body(responseDrawDTO);
-        } catch(Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError()
-                    .body(responseDTO);
-        }
+            return ResponseEntity.ok().body(concertService.searchDrawResult(member, concertId));
     }
 
     /**
@@ -100,46 +64,14 @@ public class ConcertController {
      * */
     @GetMapping("/seat")
     public ResponseEntity<?> selectSeat(@RequestParam Long concertId) {
-        try {
-            List<ResponseSeatDTO> seats = concertService.selectSeat(concertId);
-            return ResponseEntity.ok().body(seats);
-        } catch(Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError()
-                    .body(responseDTO);
-        }
+            return ResponseEntity.ok().body(concertService.selectSeat(concertId));
     }
 
     /**
      * 우리 원 더 스테이지 좌석 예매
      * */
     @PostMapping("/reservation")
-    public ResponseEntity<?> reserveSeat(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
-        try {
-            concertService.reserveSeat(member, requestSeatDTO);
-            return ResponseEntity.noContent().build();
-        } catch(Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError()
-                    .body(responseDTO);
-        }
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<?> test(@AuthenticationPrincipal Member member) {
-        try {
-            concertService.test();
-            return ResponseEntity.noContent().build();
-        } catch(Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError()
-                    .body(responseDTO);
-        }
+    public ResponseEntity<ConcertHistoryDTO> reserveSeat(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
+        return ResponseEntity.ok().body(concertService.reserveSeat(member, requestSeatDTO));
     }
 }
