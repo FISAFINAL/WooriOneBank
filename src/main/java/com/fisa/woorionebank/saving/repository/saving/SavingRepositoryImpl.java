@@ -21,6 +21,11 @@ public class SavingRepositoryImpl implements SavingRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
 
+    /**
+     * 현재 요일에 생성되었고, 생성된 지 5일 이상이며, 주차가 26주 이하인 적금 계좌를 조회
+     * @param today
+     * @return
+     */
     @Override
     public List<Saving> findSavingByCreatedDayOfweek(DayOfWeek today) {
         // 요일을 문자열로 변환
