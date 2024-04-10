@@ -211,6 +211,38 @@ public class SavingService {
 
     }
 
+    public SavingInfoDTO savingInfo(Long savingId) {
+
+        //적금조회
+        final Saving saving = savingRepository.findById(savingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Saving));
+
+        SavingDTO savingDTO = SavingDTO.fromEntity(saving);
+
+        // 입금 내역 조회
+        List<SavingHistory> ruleList = savingHistoryRepository.findBySaving(saving);
+        List<SavingHistoryDTO> historyDTOList = ruleList.stream()
+                .map(SavingHistoryDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        // 금리 계산
+        BigDecimal nowInterestRate;
+        int overdueWeek = saving.getOverdueWeek();
+
+        if (overdueWeek >= 1 && overdueWeek <= 7) {
+            nowInterestRate = BigDecimal.valueOf(3.50);
+        } else if (overdueWeek >= 8 && overdueWeek <= 26) {
+            nowInterestRate = BigDecimal.valueOf(4.50);
+        } else if (overdueWeek == 0) {
+            nowInterestRate = BigDecimal.valueOf(7.00);
+        } else {
+            throw new CustomException(ErrorCode.INVALID_OVERDUE_WEEK);
+        }
+
+        return new SavingInfoDTO(savingDTO, historyDTOList, nowInterestRate);
+
+    }
+
 
 
     public String generateUniqueAccountNumber() {
