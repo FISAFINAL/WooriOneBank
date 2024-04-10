@@ -26,6 +26,8 @@ public enum ErrorCode implements EnumModel {
 	// 통장 -> 적금 이체할때 잔액 부족
 	INSUFFICIENT_FUNDS(600, "A002", "적금에 입금할 통장 잔액이 부족합니다."),
 
+	INVALID_OVERDUE_WEEK(404,"S001","잘못된 연체 주(Overdue Week)입니다."),
+
 	// 404 not fount Exception
 	NOT_FOUND_Member(404, "N001", "존재하지 않는 회원입니다."),
 	NOT_FOUND_Saving(404, "N002", "존재하지 않는 적금입니다."),
