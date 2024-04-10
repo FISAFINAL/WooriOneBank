@@ -45,6 +45,10 @@ public class SavingController {
         return ResponseEntity.ok(savingService.findHistory(savingId));
     }
 
+    @GetMapping("/info/{savingId}")
+    public ResponseEntity<SavingInfoDTO> savingInfo(@PathVariable("savingId") Long savingId) {
+        return ResponseEntity.ok(savingService.savingInfo(savingId));
+    }
 
     
 }
