@@ -45,12 +45,6 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Account> accounts = new ArrayList<>();
 
-    private int additionalPoint; // 회원 등급에 따른 가산점 부여
-
-    public void setAdditionalPoint(int additionalPoint) {
-        this.additionalPoint = additionalPoint;
-    }
-
     //Member 생성 메서드
     public static Member createMember(RegisterDTO registerDTO, String pw){
         Member member = new Member();
