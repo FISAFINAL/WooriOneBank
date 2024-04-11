@@ -7,6 +7,7 @@ import com.fisa.woorionebank.concert.domain.entity.Status;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
 import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,8 +102,9 @@ public class ConcertDrawService {
         Random random = new Random();
 
         for (ConcertHistory concertHistory : concertHistoriesA) {
-            Optional<Long> saving = savingRepository.findByMemberId(concertHistory.getMember().getMemberId());
-            if (saving.isPresent()) {
+            List<Saving> saving = concertHistory.getMember().getSavings();
+
+            if (!saving.isEmpty()) {
                 winnerPool.add(concertHistory.getMember());
             }
         }
