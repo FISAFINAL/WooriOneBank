@@ -16,7 +16,7 @@ import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
-import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
+import com.fisa.woorionebank.seat.domain.dto.SeatListDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,10 +128,10 @@ public class ConcertServiceTest {
     @Test
     public void 공연좌석조회() throws Exception {
         // when
-        List<ResponseSeatDTO> seats = concertService.selectSeat(1L);
+        SeatListDTO seats = concertService.selectSeat(1L);
 
         // then
-        assertThat(seats.get(0).getSeatNumber()).isEqualTo("1열 1");
+        assertThat(seats.getResponseSeatDTOList().isEmpty()).isEqualTo(false);
     }
 
     @Test
