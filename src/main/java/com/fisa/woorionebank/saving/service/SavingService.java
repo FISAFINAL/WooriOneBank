@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class SavingService {
     private final SavingRepository savingRepository;
-    private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
     private final CelebrityRepository celebrityRepository;
     private final SavingHistoryRepository savingHistoryRepository;
@@ -74,7 +73,7 @@ public class SavingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Celebrity));
 
 
-        //9자리 랜덤 계좌번호 등록
+        // 랜덤 계좌번호 등록
         String savingAccount = AccountNumberGenerator.generateUniqueAccountNumber(existingAccountNumbers);
         // 중복확인을 위해 DB까지 쿼리를 날리지 않도록 하기위함
         existingAccountNumbers.add(savingAccount);
@@ -273,8 +272,6 @@ public class SavingService {
             throw new CustomException(ErrorCode.INVALID_OVERDUE_WEEK);
         }
     }
-
-
 
 
 }
