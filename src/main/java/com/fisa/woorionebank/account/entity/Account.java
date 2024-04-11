@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter
 @Table(name = "account")
 @Entity
 public class Account extends BaseEntity {

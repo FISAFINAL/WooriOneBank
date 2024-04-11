@@ -50,5 +50,5 @@ public class SavingController {
         return ResponseEntity.ok(savingService.savingInfo(savingId));
     }
 
-    
+
 }
