@@ -3,6 +3,7 @@ package com.fisa.woorionebank.concert.service;
 import com.fisa.woorionebank.common.execption.CustomException;
 import com.fisa.woorionebank.common.execption.ErrorCode;
 import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
+import com.fisa.woorionebank.concert.domain.dto.ReserveAvailableDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.domain.entity.*;
@@ -12,6 +13,7 @@ import com.fisa.woorionebank.concert.util.ConcertUtils;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
+import com.fisa.woorionebank.seat.domain.dto.SeatListDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
 import com.fisa.woorionebank.seat.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,9 +63,15 @@ public class ConcertService {
         return new ResponseDrawDTO(concertHistory.getConcert().getConcertName(), member.getName(), concertHistory.getArea());
     }
 
-    // TODO 이전에 당첨되지 않은 고객 막는 API 만들기
+    public ReserveAvailableDTO reserveAvailable(Member member, Long concertId) {
+        final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
 
-    public List<ResponseSeatDTO> selectSeat(Long concertId) {
+        if(concertHistory.getStatus() == Status.WIN) return new ReserveAvailableDTO(true);
+        else throw new CustomException(ErrorCode.INVALID_TICKETING);
+    }
+
+    public SeatListDTO selectSeat(Long concertId) {
         final Long concertVenueId = concertRepository.findConcertVenueByConcertId(concertId)
                 .orElseThrow(() -> new CustomException((ErrorCode.NOT_FOUND_ConcertVenue)));
 
@@ -73,26 +81,25 @@ public class ConcertService {
         for (Long seatId : seatsIdList) {
             // 좌석 조회 시 이미 예매가 완료된 좌석(선택 불가), 예매가 가능한 좌석 나누기
             Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seatId, concertId);
-
             Optional<Seat> seatOptional = seatRepository.findById(seatId);
+
             seatOptional.ifPresent(seat -> {
-                ResponseSeatDTO responseSeatDTO = new ResponseSeatDTO();
-                responseSeatDTO.setSeatClass(seat.getSeatClass());
-                responseSeatDTO.setSeatNumber(seat.getSeatNumber());
-                responseSeatDTO.setSeatX(seat.getSeatX());
-                responseSeatDTO.setSeatY(seat.getSeatY());
+                ResponseSeatDTO responseSeatDTO;
 
                 if(c.isEmpty()) {
-                    // 좌석 예매 가능
+                    responseSeatDTO = ResponseSeatDTO.fromEntity(seat);
                     responseSeatDTO.setReserved(false);
-                } else {
+                }
+                else {
+                    responseSeatDTO = ResponseSeatDTO.fromEntity(seat);
                     responseSeatDTO.setReserved(true);
                 }
+
                 seats.add(responseSeatDTO);
             });
         }
 
-        return seats;
+        return new SeatListDTO(seats);
     }
 
     @Transactional
