@@ -70,13 +70,14 @@ public class SavingServiceTest {
     JPAQueryFactory queryFactory;
 
     @Test
-//    @Rollback(value = false)
     public void 최애적금생성() throws Exception{
         //given
         Member member1 = new Member("ID1", "PW1", "memeber1", 20, "email1", Grade.VVIP);
         em.persist(member1);
         Account account1 = new Account("우리은행", "1111", BigDecimal.valueOf(100000), member1);
         em.persist(account1);
+        member1.addAccount(account1);
+
         Celebrity celebrity1 = new Celebrity("BTS", "url1");
         em.persist(celebrity1);
 
