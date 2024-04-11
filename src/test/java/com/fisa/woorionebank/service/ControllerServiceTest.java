@@ -10,6 +10,7 @@ import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
 import com.fisa.woorionebank.concert.domain.entity.ConcertVenue;
 import com.fisa.woorionebank.concert.domain.entity.Status;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
+import com.fisa.woorionebank.concert.service.ConcertDrawService;
 import com.fisa.woorionebank.concert.service.ConcertService;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
@@ -43,6 +44,8 @@ public class ControllerServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private ConcertService concertService;
+    @Autowired
+    private ConcertDrawService concertDrawService;
 
     @Autowired
     EntityManager em;
@@ -99,7 +102,7 @@ public class ControllerServiceTest {
     @Test
     public void 공연응모당첨() throws Exception {
         // when
-        concertService.drawConcert(1L);
+        concertDrawService.drawConcert(1L);
 
         int now = LocalDateTime.now().getDayOfMonth();
 

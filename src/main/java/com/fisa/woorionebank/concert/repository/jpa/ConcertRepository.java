@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
 
 public interface ConcertRepository extends JpaRepository<Concert, Long>, ConcertRepositoryCustom {
 
@@ -14,5 +16,5 @@ public interface ConcertRepository extends JpaRepository<Concert, Long>, Concert
     List<Member> findMemberByConcertId(Long concertId);
 
     @Query("select c.concertVenue.concertVenueId from Concert c where c.concertVenue.concertVenueId = :#{#concertId}")
-    Long findConcertVenueByConcertId(Long concertId);
+    Optional<Long> findConcertVenueByConcertId(Long concertId);
 }

@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
+import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.seat.entity.Seat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @Table(name = "concert_venue")
 @Entity
-public class ConcertVenue {
+public class ConcertVenue extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

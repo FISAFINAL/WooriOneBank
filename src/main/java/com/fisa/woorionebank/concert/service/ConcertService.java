@@ -2,16 +2,14 @@ package com.fisa.woorionebank.concert.service;
 
 import com.fisa.woorionebank.common.execption.CustomException;
 import com.fisa.woorionebank.common.execption.ErrorCode;
+import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.domain.entity.*;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
-import com.fisa.woorionebank.member.entity.Grade;
+import com.fisa.woorionebank.concert.util.ConcertUtils;
 import com.fisa.woorionebank.member.entity.Member;
-import com.fisa.woorionebank.member.repository.MemberRepository;
-import com.fisa.woorionebank.saving.domain.entity.Saving;
-import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
@@ -20,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,238 +29,44 @@ import java.util.*;
 public class ConcertService {
     private final ConcertRepository concertRepository;
     private final ConcertHistoryRepository concertHistoryRepository;
-    private final MemberRepository memberRepository;
     private final SeatRepository seatRepository;
-    private final SavingRepository savingRepository;
 
     public ResponseConcertDTO searchConcert(Long concertId) {
-//        Concert concert = concertRepository.findById(concertId).orElse(null);
-
         final Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
 
-        /*
-         * 공연 이벤트 기간 계산 로직
-         * startDate, endDate, checkDate, ticketingDate, concertDate를 기준으로 각 단계별로 현재 시점이 어느 기간에 해당하는지 계산합니다.
-         * 결과값은 PeriodType으로 반환됩니다.
-         * */
-        LocalDateTime startDate = concert.getStartDate();
-        LocalDateTime endDate = concert.getEndDate();
-        LocalDateTime checkDate = concert.getCheckDate();
-        LocalDateTime ticketingDate = concert.getTicketingDate();
-        LocalDateTime concertDate = concert.getConcertDate();
+        PeriodType period = ConcertUtils.calculatePeriod(concert);
 
-        LocalDateTime now = LocalDateTime.now();
-
-        PeriodType period;
-
-        if (now.isAfter(startDate) && now.isBefore(endDate)) {
-            period = PeriodType.ENTRY_PERIOD;
-        } else if (now.isAfter(checkDate) && now.isBefore(ticketingDate)) {
-            period = PeriodType.CONFIRMATION_PERIOD;
-        } else if (now.isAfter(ticketingDate) && now.isBefore(ticketingDate.plusDays(1).minusSeconds(1))) {
-            period = PeriodType.TICKETING_PERIOD;
-        } else if (now.isAfter(ticketingDate.plusDays(1)) && now.isBefore(concertDate)) {
-            period = PeriodType.CONCERT_PERIOD;
-        } else {
-            period = PeriodType.NONE; // 공연 이벤트 기간이 아님.
-        }
-
-//        ResponseConcertDTO concertDTO = new ResponseConcertDTO();
-//        concertDTO.setConcertName(concert.getConcertName());
-//        concertDTO.setStartDate(startDate);
-//        concertDTO.setEndDate(endDate);
-//        concertDTO.setCheckDate(checkDate);
-//        concertDTO.setTicketingDate(ticketingDate);
-//        concertDTO.setConcertDate(concertDate);
-//        concertDTO.setRunningTime(concert.getRunningTime());
-//        concertDTO.setAgeLimit(concert.getAgeLimit());
-//        concertDTO.setLineup(concert.getLineup());
-//        concertDTO.setDrawInfo(concert.getDrawInfo());
-//        concertDTO.setCurrent(period);
-
-        ResponseConcertDTO concertDTO = ResponseConcertDTO.fromEntity(concert);
-
-        return concertDTO;
+        return ResponseConcertDTO.fromEntity(concert, period);
     }
 
     @Transactional
-    public void applyConcert(Member member, Long concertId) {
+    public ConcertHistoryDTO applyConcert(Member member, Long concertId) {
         final Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
 
-//        Optional<ConcertHistory> c = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId);
-//
-//        if (c.isEmpty()) {
-//            ConcertHistory concertHistory = ConcertHistory.builder()
-//                    .status(Status.APPLY)
-//                    .member(member)
-//                    .concert(concert)
-//                    .build();
-//
-//            concertHistoryRepository.save(concertHistory);
-//        } else {
-//            log.error("이미 콘서트를 응모한 회원입니다."); // TODO 추후 에러 처리
-//        }
+        final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElseThrow(
+                () -> new CustomException(ErrorCode.ALREADY_APPLIED_Concert)
+        );
 
-        concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
-                .ifPresentOrElse(
-                        (c) -> log.error("이미 콘서트를 응모한 회원입니다."), // 커스텀 에러
-                        () -> { // 기록이 없을 경우
-                            ConcertHistory concertHistory = ConcertHistory.builder()
-                                    .status(Status.APPLY)
-                                    .member(member)
-                                    .concert(concert)
-                                    .build();
-                            concertHistoryRepository.save(concertHistory);
-                        }
-                );
-
-    }
-
-    // 회원 등급을 가산점으로 변환하는 함수
-    public int transferPoint(Grade grade) {
-
-        // 회원 등급을 가산점으로 변환하는 함수
-        Map<Grade, Integer> map = new HashMap<>();
-        Grade[] grades = Grade.values();
-        int len = Grade.values().length;
-
-        for (int i = 0; i < len; i++) {
-            map.put(grades[i], len - i);
-        }
-
-        return map.get(grade);
-    }
-
-    @Transactional
-    public void drawConcert(Long concertId) {
-        /* 좌석 당첨 로직 */
-        // R석 우리카드 실적 높은 사람(1만)
-        // A석 적금 가입 고객(3만)
-        // B석 신청한 사람 중 랜덤(2만)
-        List<Member> memberList = concertHistoryRepository.findMemberByConcertId(concertId);
-
-        /*
-         * seatAvailable 변수는 가용 좌석 수입니다.
-         *  1. Concert entity에 컬럼 추가
-         *  2. Seat(공연장 정보) entity 추가하는 방법 대신,
-         * 우선 당첨 내역 확인 로직에서만 관리하고 있습니다.
-         * */
-        int seatAvailableR = 10_000;
-        int seatAvailableA = 30_000;
-        int seatAvailableB = 20_000;
-
-        /* R석 당첨자 뽑기 */
-        // 회원 등급을 가산점으로 변환하기
-        Map<Integer, Member> winners = new HashMap<>();
-        List<Member> winnerPool = new ArrayList<>();
-
-        for (Member m : memberList) {
-            int point = transferPoint(m.getGrade());
-
-            // 우승자 풀에 추가 (가산점만큼 여러 번 추가)
-            for (int i = 0; i < point; i++) {
-                winnerPool.add(m);
-            }
-        }
-
-        Random random = new Random();
-
-        int numWinnersR = Math.min(seatAvailableR, memberList.size());
-
-        // 랜덤으로 R석 당첨자 선발
-        for (int i = 0; i < numWinnersR && !winnerPool.isEmpty(); i++) {
-            int index = random.nextInt(winnerPool.size());
-            winners.put(0, winnerPool.remove(index));
-        }
-
-        for (Member winner : winners.values()) {
-            ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
-
-            if (concertHistory != null) {
-                concertHistory.win(Area.R);
-                concertHistoryRepository.save(concertHistory);
-            }
-        }
-        // end of R석 당첨 로직
-
-        /* A석 당첨자 뽑기 */
-        List<ConcertHistory> concertHistories = concertHistoryRepository.findByStatusAndConcertId(Status.APPLY, concertId);
-
-        // 만약 apply인 사람들이 없으면 이미 전원 R석 당첨입니다.
-        if(!concertHistories.isEmpty()) {
-            winners = new HashMap<>();
-            winnerPool = new ArrayList<>();
-            random = new Random();
-
-            int numWinnersA = Math.min(seatAvailableA, concertHistories.size());
-
-            // 랜덤으로 A석 당첨자 선발
-            for (int i = 0; i < numWinnersA && !winnerPool.isEmpty(); i++) {
-                // 적금 가입한 사용자만 선발한다.
-                Optional<Long> saving = savingRepository.findByMemberId(concertHistories.get(i).getMember().getMemberId());
-                if(!saving.isEmpty()) {
-                    int index = random.nextInt(winnerPool.size());
-                    winners.put(0, winnerPool.remove(index));
-                }
-            }
-
-            for (Member winner : winners.values()) {
-                ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
-
-                if (concertHistory != null) {
-                    concertHistory.win(Area.A);
-                    concertHistoryRepository.save(concertHistory);
-                }
-            }
-        }
-        // end of A석 당첨
-
-        /* B석 당첨자 뽑기 */
-        List<ConcertHistory> concertHistoriesB = concertHistoryRepository.findByStatusAndConcertId(Status.APPLY, concertId);
-
-        // 만약 apply인 사람들이 없으면 이미 전원 R석, A석 당첨입니다.
-        if(!concertHistoriesB.isEmpty()) {
-            winners = new HashMap<>();
-            winnerPool = new ArrayList<>();
-            random = new Random();
-
-            int numWinnersB = Math.min(seatAvailableB, concertHistoriesB.size());
-
-            // 랜덤으로 B석 당첨자 선발
-            for (int i = 0; i < numWinnersB && !winnerPool.isEmpty(); i++) {
-                int index = random.nextInt(winnerPool.size());
-                winners.put(0, winnerPool.remove(index));
-            }
-
-            for (Member winner : winners.values()) {
-                ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
-
-                if (concertHistory != null) {
-                    concertHistory.win(Area.B);
-                    concertHistoryRepository.save(concertHistory);
-                }
-            }
-        }
-        // end of B석 당첨
+        ConcertHistory appliedConcert = concertHistory.apply(Status.APPLY, member, concert);
+        return ConcertHistoryDTO.of(appliedConcert);
     }
 
     @Transactional
     public ResponseDrawDTO searchDrawResult(Member member, Long concertId) {
-        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
-                .orElseThrow(() -> new NotFoundException("Concert history not found"));
+        final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
 
-        ResponseDrawDTO responseDrawDTO = new ResponseDrawDTO();
-        responseDrawDTO.setConcertName(concertHistory.getConcert().getConcertName());
-        responseDrawDTO.setMemberName(member.getName());
-        responseDrawDTO.setArea(concertHistory.getArea());
-
-        return responseDrawDTO;
+        return new ResponseDrawDTO(concertHistory.getConcert().getConcertName(), member.getName(), concertHistory.getArea());
     }
 
+    // TODO 이전에 당첨되지 않은 고객 막는 API 만들기
+
     public List<ResponseSeatDTO> selectSeat(Long concertId) {
-        Long concertVenueId = concertRepository.findConcertVenueByConcertId(concertId);
+        final Long concertVenueId = concertRepository.findConcertVenueByConcertId(concertId)
+                .orElseThrow(() -> new CustomException((ErrorCode.NOT_FOUND_ConcertVenue)));
+
         List<Long> seatsIdList = seatRepository.findSeatByConcertVenueId(concertVenueId);
         List<ResponseSeatDTO> seats = new ArrayList<>();
 
@@ -293,27 +96,26 @@ public class ConcertService {
     }
 
     @Transactional
-    public void reserveSeat(Member member, RequestSeatDTO seatDTO) {
-        // concert_history의 좌석id(fk), 예매 일시 업데이트
-        Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY());
+    public ConcertHistoryDTO reserveSeat(Member member, RequestSeatDTO seatDTO) {
+        Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Seat));
 
-        // 이미 선택된 좌석 처리
-        Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId());
+        // 이미 선택된 좌석 확인
+        concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId())
+                .orElseThrow(() -> new CustomException((ErrorCode.ALREADY_RESERVED_SEAT)));
 
-        if(c.isEmpty()) {
-            ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId()).orElse(null);
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
 
-            concertHistory.reserve();
-            concertHistory.setSeat(seat);
-            concertHistoryRepository.save(concertHistory);
-        } else {
-            log.error("이미 선택된 좌석입니다."); // TODO 추후 에러 처리
-        }
-    }
+        concertHistoryRepository.save(ConcertHistory.of(
+            Status.SUCCESS,
+            concertHistory.getArea(),
+            LocalDateTime.now(),
+            concertHistory.getMember(),
+            seat,
+            concertHistory.getConcert()
+        ));
 
-    public void test() {
-        Optional<Long> s = savingRepository.findByMemberId(1L);
-
-        log.info("{}", savingRepository.findByMemberId(1L));
+        return ConcertHistoryDTO.fromEntity(concertHistory);
     }
 }
