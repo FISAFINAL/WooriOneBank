@@ -1,17 +1,15 @@
 package com.fisa.woorionebank.concert.controller;
 
-import com.fisa.woorionebank.concert.domain.dto.*;
+import com.fisa.woorionebank.concert.domain.dto.request.RequestDrawDTO;
+import com.fisa.woorionebank.concert.domain.dto.response.*;
 import com.fisa.woorionebank.concert.service.ConcertDrawService;
 import com.fisa.woorionebank.concert.service.ConcertService;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
-import com.fisa.woorionebank.seat.domain.dto.SeatListDTO;
+import com.fisa.woorionebank.seat.domain.dto.response.SeatListDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/concert")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "공연 API", description = "공연 응모, 예매 관련 기능")
 public class ConcertController {
     private final ConcertService concertService;
@@ -39,7 +36,7 @@ public class ConcertController {
      * */
     @Operation(summary = "공연 응모", description = "3/1 ~ 4/30(공연 응모 기간) 공연 상세 정보 화면에서 공연을 응모합니다.")
     @PostMapping("/apply")
-    public ResponseEntity<ConcertHistoryDTO> applyConcert(@AuthenticationPrincipal Member member, @RequestBody RequestDrawDTO requestDrawDTO) {
+    public ResponseEntity<ConcertApplyDTO> applyConcert(@AuthenticationPrincipal Member member, @RequestBody RequestDrawDTO requestDrawDTO) {
         return ResponseEntity.ok().body(concertService.applyConcert(member, requestDrawDTO.getConcertId()));
     }
 
@@ -85,7 +82,7 @@ public class ConcertController {
      * */
     @Operation(summary = "좌석 예매", description = "5/2 19시 이후(공연 예매 기간) 좌석을 예매합니다.")
     @PostMapping("/reservation")
-    public ResponseEntity<ConcertHistoryDTO> reserveSeat(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
+    public ResponseEntity<ConcertReserveDTO> reserveSeat(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
         return ResponseEntity.ok().body(concertService.reserveSeat(member, requestSeatDTO));
     }
 
@@ -94,7 +91,7 @@ public class ConcertController {
      * */
     @Operation(summary = "좌석 예매 결과 조회", description = "5/2 19시 이후(공연 예매 기간) 좌석 예매 결과를 조회합니다.")
     @GetMapping("/reservation/info")
-    public ResponseEntity<ConcertReserveDTO> searchReserve(@AuthenticationPrincipal Member member, @RequestBody Long concertId) {
+    public ResponseEntity<ConcertReserveDTO> searchReserve(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
         return ResponseEntity.ok().body(concertService.searchReserve(member, concertId));
     }
 }

@@ -1,13 +1,10 @@
-package com.fisa.woorionebank.concert.domain.dto;
+package com.fisa.woorionebank.concert.domain.dto.request;
 
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 public class ConcertDTO {

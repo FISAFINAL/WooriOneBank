@@ -2,7 +2,7 @@ package com.fisa.woorionebank.concert.service;
 
 import com.fisa.woorionebank.common.execption.CustomException;
 import com.fisa.woorionebank.common.execption.ErrorCode;
-import com.fisa.woorionebank.concert.domain.dto.*;
+import com.fisa.woorionebank.concert.domain.dto.response.*;
 import com.fisa.woorionebank.concert.domain.entity.Concert;
 import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
 import com.fisa.woorionebank.concert.domain.entity.PeriodType;
@@ -13,19 +13,16 @@ import com.fisa.woorionebank.concert.util.ConcertUtils;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
-import com.fisa.woorionebank.seat.domain.dto.SeatListDTO;
+import com.fisa.woorionebank.seat.domain.dto.response.SeatListDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
 import com.fisa.woorionebank.seat.repository.SeatRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class ConcertService {
@@ -49,7 +46,7 @@ public class ConcertService {
     }
 
     @Transactional
-    public ConcertHistoryDTO applyConcert(Member member, Long concertId) {
+    public ConcertApplyDTO applyConcert(Member member, Long concertId) {
         final Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
 
@@ -66,7 +63,7 @@ public class ConcertService {
 
         } else throw new CustomException(ErrorCode.ALREADY_APPLIED_Concert);
 
-        return ConcertHistoryDTO.fromEntity(appliedConcert);
+        return ConcertApplyDTO.fromEntity(appliedConcert);
     }
 
     @Transactional
@@ -116,27 +113,22 @@ public class ConcertService {
     }
 
     @Transactional
-    public ConcertHistoryDTO reserveSeat(Member member, RequestSeatDTO seatDTO) {
+    public ConcertReserveDTO reserveSeat(Member member, RequestSeatDTO seatDTO) {
         Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Seat));
 
         // 이미 선택된 좌석 확인
-        concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId())
-                .orElseThrow(() -> new CustomException((ErrorCode.ALREADY_RESERVED_SEAT)));
+        Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId());
 
-        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
+        if(c.isEmpty()) {
+            ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
 
-        concertHistoryRepository.save(ConcertHistory.of(
-                Status.SUCCESS,
-                concertHistory.getArea(),
-                LocalDateTime.now(),
-                concertHistory.getMember(),
-                seat,
-                concertHistory.getConcert()
-        ));
+            concertHistory.reserve(seat);
+            concertHistoryRepository.save(concertHistory);
 
-        return ConcertHistoryDTO.fromEntity(concertHistory);
+            return ConcertReserveDTO.fromEntity(concertHistory);
+        } else throw new CustomException(ErrorCode.ALREADY_RESERVED_SEAT);
     }
 
     public ConcertReserveDTO searchReserve(Member member, Long concertId) {

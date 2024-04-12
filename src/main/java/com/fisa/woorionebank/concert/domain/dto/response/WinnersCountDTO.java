@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.concert.domain.dto;
+package com.fisa.woorionebank.concert.domain.dto.response;
 
 import lombok.AllArgsConstructor;
 

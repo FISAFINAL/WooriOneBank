@@ -1,10 +1,11 @@
 package com.fisa.woorionebank.service;
 
 
-import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
-import com.fisa.woorionebank.concert.domain.dto.RequestDrawDTO;
-import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
-import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
+import com.fisa.woorionebank.concert.domain.dto.request.ConcertDTO;
+import com.fisa.woorionebank.concert.domain.dto.request.RequestDrawDTO;
+import com.fisa.woorionebank.concert.domain.dto.response.ConcertReserveDTO;
+import com.fisa.woorionebank.concert.domain.dto.response.ResponseConcertDTO;
+import com.fisa.woorionebank.concert.domain.dto.response.ResponseDrawDTO;
 import com.fisa.woorionebank.concert.domain.entity.Concert;
 import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
 import com.fisa.woorionebank.concert.domain.entity.ConcertVenue;
@@ -16,7 +17,7 @@ import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
-import com.fisa.woorionebank.seat.domain.dto.SeatListDTO;
+import com.fisa.woorionebank.seat.domain.dto.response.SeatListDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,5 +154,18 @@ public class ConcertServiceTest {
         // then
         ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), requestSeatDTO.getConcertId()).orElse(null);
         assertThat(concertHistory.getStatus()).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
+    public void 좌석예매결과조회() {
+        // given
+        Member member = memberRepository.findById(1L).orElse(null);
+
+        // when
+        ConcertReserveDTO concertReserveDTO = concertService.searchReserve(member, 1L);
+
+        // then
+        assertThat(concertReserveDTO.getSeatName()).isEqualTo("1열 1");
+
     }
 }
