@@ -2,7 +2,6 @@ package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.seat.entity.Seat;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Builder
 @Table(name = "concert_venue")

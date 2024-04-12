@@ -1,8 +1,7 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.common.BaseEntity;
-import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
-import lombok.AllArgsConstructor;
+import com.fisa.woorionebank.concert.domain.dto.request.ConcertDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Builder
 @Table(name = "concert")

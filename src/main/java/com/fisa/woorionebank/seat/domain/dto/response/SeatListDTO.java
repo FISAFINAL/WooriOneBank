@@ -1,5 +1,6 @@
-package com.fisa.woorionebank.seat.domain.dto;
+package com.fisa.woorionebank.seat.domain.dto.response;
 
+import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

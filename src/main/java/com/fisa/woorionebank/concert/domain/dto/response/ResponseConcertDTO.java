@@ -1,14 +1,10 @@
-package com.fisa.woorionebank.concert.domain.dto;
+package com.fisa.woorionebank.concert.domain.dto.response;
 
 import com.fisa.woorionebank.concert.domain.entity.*;
-import com.fisa.woorionebank.member.entity.Member;
-import com.fisa.woorionebank.seat.entity.Seat;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Builder
 @ToString

@@ -1,11 +1,8 @@
-package com.fisa.woorionebank.concert.domain.dto;
+package com.fisa.woorionebank.concert.domain.dto.request;
 
 import lombok.*;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 public class RequestConcertDTO {

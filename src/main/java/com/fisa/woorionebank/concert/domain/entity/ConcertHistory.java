@@ -1,10 +1,9 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.common.BaseEntity;
-import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
+import com.fisa.woorionebank.concert.domain.dto.response.ConcertHistoryDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.entity.Seat;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 @Builder
 @Table(name = "concert_history")
@@ -47,6 +45,12 @@ public class ConcertHistory extends BaseEntity {
     public void win(Area area) {
         this.status = Status.WIN;
         this.area = area;
+    }
+
+    public void reserve(Seat seat) {
+        this.status = Status.SUCCESS;
+        this.ticketingDate = LocalDateTime.now();
+        this.seat = seat;
     }
 
     public ConcertHistory apply(Status apply, Member member, Concert concert) {
