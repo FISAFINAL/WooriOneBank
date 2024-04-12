@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface SavingRepositoryCustom {
 //    복잡한 쿼리
-    public List<Saving> findSavingByCreatedDayOfweek(DayOfWeek today);
+    List<Saving> findSavingByCreatedDayOfweek(DayOfWeek today);
 
 }

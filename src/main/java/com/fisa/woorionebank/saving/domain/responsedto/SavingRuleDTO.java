@@ -16,11 +16,13 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SavingRuleDTO {
+    private Long savingRuleId;
     private String savingRuleName;
     private BigDecimal depositAmount;
 
     public static SavingRuleDTO fromEntity(SavingRule savingRule) {
         return SavingRuleDTO.builder()
+                .savingRuleId(savingRule.getSavingRuleId())
                 .savingRuleName(savingRule.getSavingRuleName())
                 .depositAmount(savingRule.getDepositAmount())
                 .build();
