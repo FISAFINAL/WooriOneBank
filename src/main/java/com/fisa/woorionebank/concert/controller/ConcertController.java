@@ -78,4 +78,12 @@ public class ConcertController {
     public ResponseEntity<ConcertHistoryDTO> reserveSeat(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
         return ResponseEntity.ok().body(concertService.reserveSeat(member, requestSeatDTO));
     }
+
+    /**
+     * 우리 원 더 스테이지 좌석 예매 결과 조회
+     * */
+    @GetMapping("/reservation/info")
+    public ResponseEntity<ConcertReserveDTO> searchReserve(@AuthenticationPrincipal Member member, @RequestBody Long concertId) {
+        return ResponseEntity.ok().body(concertService.searchReserve(member, concertId));
+    }
 }

@@ -2,11 +2,11 @@ package com.fisa.woorionebank.concert.service;
 
 import com.fisa.woorionebank.common.execption.CustomException;
 import com.fisa.woorionebank.common.execption.ErrorCode;
-import com.fisa.woorionebank.concert.domain.dto.ConcertHistoryDTO;
-import com.fisa.woorionebank.concert.domain.dto.ReserveAvailableDTO;
-import com.fisa.woorionebank.concert.domain.dto.ResponseConcertDTO;
-import com.fisa.woorionebank.concert.domain.dto.ResponseDrawDTO;
-import com.fisa.woorionebank.concert.domain.entity.*;
+import com.fisa.woorionebank.concert.domain.dto.*;
+import com.fisa.woorionebank.concert.domain.entity.Concert;
+import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
+import com.fisa.woorionebank.concert.domain.entity.PeriodType;
+import com.fisa.woorionebank.concert.domain.entity.Status;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.concert.util.ConcertUtils;
@@ -16,22 +16,28 @@ import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.SeatListDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
 import com.fisa.woorionebank.seat.repository.SeatRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ConcertService {
     private final ConcertRepository concertRepository;
     private final ConcertHistoryRepository concertHistoryRepository;
     private final SeatRepository seatRepository;
+
+    public ConcertService(ConcertRepository concertRepository, ConcertHistoryRepository concertHistoryRepository, SeatRepository seatRepository) {
+        this.concertRepository = concertRepository;
+        this.concertHistoryRepository = concertHistoryRepository;
+        this.seatRepository = seatRepository;
+    }
 
     public ResponseConcertDTO searchConcert(Long concertId) {
         final Concert concert = concertRepository.findById(concertId)
@@ -47,12 +53,20 @@ public class ConcertService {
         final Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
 
-        final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId).orElseThrow(
-                () -> new CustomException(ErrorCode.ALREADY_APPLIED_Concert)
-        );
+        final Optional<ConcertHistory> concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId);
 
-        ConcertHistory appliedConcert = concertHistory.apply(Status.APPLY, member, concert);
-        return ConcertHistoryDTO.of(appliedConcert);
+        ConcertHistory appliedConcert;
+
+        if(concertHistory.isEmpty()) {
+            appliedConcert = concertHistoryRepository.save(ConcertHistory.saveConcertHistory(new ConcertHistoryDTO(
+                    Status.APPLY,
+                    member,
+                    concert
+            )));
+
+        } else throw new CustomException(ErrorCode.ALREADY_APPLIED_Concert);
+
+        return ConcertHistoryDTO.fromEntity(appliedConcert);
     }
 
     @Transactional
@@ -67,7 +81,7 @@ public class ConcertService {
         final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
 
-        if(concertHistory.getStatus() == Status.WIN) return new ReserveAvailableDTO(true);
+        if (concertHistory.getStatus() == Status.WIN) return new ReserveAvailableDTO(true);
         else throw new CustomException(ErrorCode.INVALID_TICKETING);
     }
 
@@ -86,11 +100,10 @@ public class ConcertService {
             seatOptional.ifPresent(seat -> {
                 ResponseSeatDTO responseSeatDTO;
 
-                if(c.isEmpty()) {
+                if (c.isEmpty()) {
                     responseSeatDTO = ResponseSeatDTO.fromEntity(seat);
                     responseSeatDTO.setReserved(false);
-                }
-                else {
+                } else {
                     responseSeatDTO = ResponseSeatDTO.fromEntity(seat);
                     responseSeatDTO.setReserved(true);
                 }
@@ -115,14 +128,31 @@ public class ConcertService {
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
 
         concertHistoryRepository.save(ConcertHistory.of(
-            Status.SUCCESS,
-            concertHistory.getArea(),
-            LocalDateTime.now(),
-            concertHistory.getMember(),
-            seat,
-            concertHistory.getConcert()
+                Status.SUCCESS,
+                concertHistory.getArea(),
+                LocalDateTime.now(),
+                concertHistory.getMember(),
+                seat,
+                concertHistory.getConcert()
         ));
 
         return ConcertHistoryDTO.fromEntity(concertHistory);
+    }
+
+    public ConcertReserveDTO searchReserve(Member member, Long concertId) {
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
+
+        Status status = concertHistory.getStatus();
+
+        if(status.equals(Status.APPLY)) {
+            throw new CustomException(ErrorCode.NOT_WIN_Member); // 응모 당첨 내역이 없음.
+        } else if(status.equals(Status.WIN)) {
+            throw new CustomException(ErrorCode.ON_SITE_TICKETING); // 당첨됐지만 좌석 예매를 하지 않음. -> 티켓 현장 수령 대상
+        } else if(status.equals(Status.SUCCESS)) {
+            return ConcertReserveDTO.fromEntity(concertHistory); // Status.SUCCESS -> 좌석 예매 정보 반환
+        } else {
+            throw new CustomException(ErrorCode.INVALID_TICKETING); // 공연을 응모하지 않은 회원입니다.
+        }
     }
 }
