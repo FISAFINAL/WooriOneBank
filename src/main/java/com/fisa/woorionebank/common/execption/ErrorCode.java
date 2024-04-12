@@ -26,7 +26,10 @@ public enum ErrorCode implements EnumModel {
 	// 콘서트
 	ALREADY_APPLIED_Concert(500, "C001", "이미 공연을 응모한 회원입니다."),
 	ALREADY_RESERVED_SEAT(500, "C002", "이미 선택된 좌석입니다."),
-	INVALID_TICKETING(500, "C002", "공연을 응모하지 않은 회원입니다."),
+	INVALID_TICKETING(500, "C003", "공연을 응모하지 않은 회원입니다."),
+	NOT_WIN_Member(500, "C004", "당첨되지 않은 회원입니다."),
+	ON_SITE_TICKETING(500, "C004", "티켓 현장 수령 회원입니다."),
+
 
 
 	// 통장 -> 적금 이체할때 잔액 부족
@@ -41,7 +44,7 @@ public enum ErrorCode implements EnumModel {
 	NOT_FOUND_Celebrity(404, "N004", "존재하지 않는 연예인입니다."),
 	NOT_FOUND_SavingRule(404, "N005", "존재하지 않는 규칙입니다."),
 	NOT_FOUND_Concert(404, "N006", "존재하지 않는 공연입니다."),
-	NOT_FOUND_ConcertHistory(404, "N007", "공연 예매 내역이 존재하지 않습니다."),
+	NOT_FOUND_ConcertHistory(404, "N007", "공연 응모 내역이 존재하지 않습니다."),
 	NOT_FOUND_ConcertVenue(404, "N008", "존재하지 않는 공연장입니다."),
 	NOT_FOUND_Seat(404, "N009", "존재하지 않는 좌석입니다."),
 
