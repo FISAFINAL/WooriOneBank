@@ -1,13 +1,14 @@
 package com.fisa.woorionebank.saving.domain.responsedto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class SavingInfoDTO {
     private SavingDTO savingDTO;
