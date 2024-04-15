@@ -17,11 +17,12 @@ public enum ErrorCode implements EnumModel {
 	//회원 로그인 시 발생 가능 예외
 	INVALID_Member_Login(401, "M001", "존재하지 않는 회원 정보입니다."),
 	INVALID_Member_Password(401, "M002", "비밀번호가 일치하지 않습니다."),
-	INVALID_Member_LOGIN_INFO(401, "M003", "올바르지 않은 로그인 회원 정보입니다."),
+	INVALID_Member_LOGIN_INFO(401, "M003", "올바르지 않은 로그인 정보입니다."),
 	INVALID_JWT_TOKEN(401, "M004", "올바르지 않은 액세스 토큰 정보를 가진 사용자입니다."),
 	INVALID_JWT_REFRESH_TOKEN(401, "M005", "올바르지 않은 리프레시 토큰 정보를 가진 사용자입니다."),
 	//중복여부 체크
-	DUPLICATE_MEMBER(400, "M003", "중복된 이메일입니다."),
+	DUPLICATE_MEMBER(400, "M003", "중복된 아이디 입니다."),
+	DUPLICATE_EMAIL(400, "M003", "중복된 이메일 입니다."),
 
 	// 콘서트
 	ALREADY_APPLIED_Concert(500, "C001", "이미 공연을 응모한 회원입니다."),

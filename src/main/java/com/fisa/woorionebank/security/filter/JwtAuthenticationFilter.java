@@ -1,7 +1,7 @@
 package com.fisa.woorionebank.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fisa.woorionebank.member.domain.dto.requestDto.LoginDto;
+import com.fisa.woorionebank.member.domain.dto.request.LoginDto;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.security.TokenProvider;
 import lombok.SneakyThrows;

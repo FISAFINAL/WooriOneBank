@@ -10,6 +10,7 @@ import com.fisa.woorionebank.seat.domain.dto.response.SeatListDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/concert")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "공연 API", description = "공연 응모, 예매 관련 기능")
 public class ConcertController {
     private final ConcertService concertService;
