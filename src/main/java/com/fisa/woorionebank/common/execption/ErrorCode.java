@@ -21,7 +21,7 @@ public enum ErrorCode implements EnumModel {
 	INVALID_JWT_TOKEN(401, "M004", "올바르지 않은 액세스 토큰 정보를 가진 사용자입니다."),
 	INVALID_JWT_REFRESH_TOKEN(401, "M005", "올바르지 않은 리프레시 토큰 정보를 가진 사용자입니다."),
 	//중복여부 체크
-	DUPLICATE_Member(400, "M003", "중복된 이메일입니다."),
+	DUPLICATE_MEMBER(400, "M003", "중복된 이메일입니다."),
 
 	// 콘서트
 	ALREADY_APPLIED_Concert(500, "C001", "이미 공연을 응모한 회원입니다."),

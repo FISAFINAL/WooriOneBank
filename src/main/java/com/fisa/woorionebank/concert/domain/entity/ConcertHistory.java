@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Getter
-@Builder
 @Table(name = "concert_history")
 @Entity
 public class ConcertHistory extends BaseEntity {
@@ -67,6 +66,23 @@ public class ConcertHistory extends BaseEntity {
         concertHistory.member = concertHistoryDTO.getMember();
         concertHistory.concert = concertHistoryDTO.getConcert();
         return concertHistory;
+    }
+
+    @Builder
+    public ConcertHistory(
+            Status status,
+            Area area,
+            LocalDateTime ticketingDate,
+            Member member,
+            Seat seat,
+            Concert concert
+    ) {
+        this.status = status;
+        this.area = area;
+        this.ticketingDate = ticketingDate;
+        this.member = member;
+        this.seat = seat;
+        this.concert = concert;
     }
 
     public static ConcertHistory of(

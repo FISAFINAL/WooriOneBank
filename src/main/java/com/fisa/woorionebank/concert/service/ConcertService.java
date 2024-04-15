@@ -66,7 +66,6 @@ public class ConcertService {
         return ConcertApplyDTO.fromEntity(appliedConcert);
     }
 
-    @Transactional
     public ResponseDrawDTO searchDrawResult(Member member, Long concertId) {
         final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
@@ -120,7 +119,7 @@ public class ConcertService {
         // 이미 선택된 좌석 확인
         Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId());
 
-        if(c.isEmpty()) {
+        if(!c.isPresent()) {
             ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId())
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
 
@@ -128,7 +127,9 @@ public class ConcertService {
             concertHistoryRepository.save(concertHistory);
 
             return ConcertReserveDTO.fromEntity(concertHistory);
-        } else throw new CustomException(ErrorCode.ALREADY_RESERVED_SEAT);
+        }
+
+        throw new CustomException(ErrorCode.ALREADY_RESERVED_SEAT);
     }
 
     public ConcertReserveDTO searchReserve(Member member, Long concertId) {
