@@ -9,14 +9,12 @@ import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

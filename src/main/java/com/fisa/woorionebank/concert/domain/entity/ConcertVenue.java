@@ -2,14 +2,17 @@ package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.seat.entity.Seat;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @RequiredArgsConstructor
 @Getter
 @Builder
@@ -35,6 +38,21 @@ public class ConcertVenue extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "concertVenue")
     private List<Seat> seats = new ArrayList<>();
+
+//    @Builder
+//    public ConcertVenue(
+//            String venueName,
+//            String venueAddress,
+//            int capacity,
+//            List<Concert> concerts,
+//            List<Seat> seats
+//    ) {
+//        this.venueName = venueName;
+//        this.venueAddress = venueAddress;
+//        this.capacity = capacity;
+//        this.concerts = concerts;
+//        this.seats = seats;
+//    }
 
     public ConcertVenue(Long concertVenueId, String venueName, String venueAddress, int capacity) {
         this.concertVenueId = concertVenueId;
