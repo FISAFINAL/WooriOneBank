@@ -1,8 +1,7 @@
 package com.fisa.woorionebank.concert.domain.entity;
 
 import com.fisa.woorionebank.common.BaseEntity;
-import com.fisa.woorionebank.concert.domain.dto.ConcertDTO;
-import lombok.AllArgsConstructor;
+import com.fisa.woorionebank.concert.domain.dto.request.ConcertDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
 @Table(name = "concert")
 @Entity
 public class Concert extends BaseEntity {
@@ -47,6 +44,35 @@ public class Concert extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_venue_id")
     private ConcertVenue concertVenue;
+
+    @Builder
+    public Concert(
+            String concertName,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            LocalDateTime checkDate,
+            LocalDateTime ticketingDate,
+            LocalDateTime concertDate,
+            int runningTime,
+            String ageLimit,
+            String lineup,
+            String drawInfo,
+            String imgUrl,
+            ConcertVenue concertVenue
+    ) {
+        this.concertName = concertName;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.checkDate = checkDate;
+        this.ticketingDate = ticketingDate;
+        this.concertDate = concertDate;
+        this.runningTime = runningTime;
+        this.ageLimit = ageLimit;
+        this.lineup = lineup;
+        this.drawInfo = drawInfo;
+        this.imgUrl = imgUrl;
+        this.concertVenue = concertVenue;
+    }
 
     public static Concert createConcert(ConcertDTO concertDTO){
         Concert concert = new Concert();

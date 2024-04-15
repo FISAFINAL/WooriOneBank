@@ -1,6 +1,6 @@
 package com.fisa.woorionebank.concert.service;
 
-import com.fisa.woorionebank.concert.domain.dto.WinnersCountDTO;
+import com.fisa.woorionebank.concert.domain.dto.response.WinnersCountDTO;
 import com.fisa.woorionebank.concert.domain.entity.Area;
 import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
 import com.fisa.woorionebank.concert.domain.entity.Status;
@@ -8,22 +8,18 @@ import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.saving.domain.entity.Saving;
-import com.fisa.woorionebank.saving.repository.saving.SavingRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ConcertDrawService {
     private final ConcertHistoryRepository concertHistoryRepository;
-    private final SavingRepository savingRepository;
 
     @Transactional
     public WinnersCountDTO drawConcert(Long concertId) {

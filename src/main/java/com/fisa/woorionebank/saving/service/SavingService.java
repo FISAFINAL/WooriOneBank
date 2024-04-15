@@ -1,7 +1,6 @@
 package com.fisa.woorionebank.saving.service;
 
 import com.fisa.woorionebank.account.entity.Account;
-import com.fisa.woorionebank.account.repository.AccountRepository;
 import com.fisa.woorionebank.common.execption.CustomException;
 import com.fisa.woorionebank.common.execption.ErrorCode;
 import com.fisa.woorionebank.member.entity.Member;
@@ -29,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -153,6 +151,7 @@ public class SavingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Saving));
 
         // 규칙조회 (규칙 없을 수 있음)
+//        List<SavingRule> ruleList = savingRuleRepository.findBySaving(saving);
         List<SavingRule> ruleList = savingRuleRepository.findBySaving(saving);
 
         // List<SavingRule> -> List<SavingRuleDTO> 변환

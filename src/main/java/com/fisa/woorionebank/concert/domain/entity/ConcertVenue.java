@@ -8,11 +8,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Builder
 @Table(name = "concert_venue")
@@ -37,6 +38,21 @@ public class ConcertVenue extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "concertVenue")
     private List<Seat> seats = new ArrayList<>();
+
+//    @Builder
+//    public ConcertVenue(
+//            String venueName,
+//            String venueAddress,
+//            int capacity,
+//            List<Concert> concerts,
+//            List<Seat> seats
+//    ) {
+//        this.venueName = venueName;
+//        this.venueAddress = venueAddress;
+//        this.capacity = capacity;
+//        this.concerts = concerts;
+//        this.seats = seats;
+//    }
 
     public ConcertVenue(Long concertVenueId, String venueName, String venueAddress, int capacity) {
         this.concertVenueId = concertVenueId;

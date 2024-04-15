@@ -1,14 +1,10 @@
-package com.fisa.woorionebank.concert.domain.dto;
+package com.fisa.woorionebank.concert.domain.dto.response;
 
 import com.fisa.woorionebank.concert.domain.entity.*;
-import com.fisa.woorionebank.member.entity.Member;
-import com.fisa.woorionebank.seat.entity.Seat;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Builder
 @ToString
@@ -33,6 +29,8 @@ public class ResponseConcertDTO {
 
     private String ageLimit;
 
+    private String imgUrl; // 공연 정보 포스터 이미지
+
     private String lineup; // 라인업
 
     private String drawInfo; // 당첨 기준에 관한 정보
@@ -49,6 +47,7 @@ public class ResponseConcertDTO {
                 .concertDate(concert.getConcertDate())
                 .runningTime(concert.getRunningTime())
                 .ageLimit(concert.getAgeLimit())
+                .imgUrl(concert.getImgUrl())
                 .lineup(concert.getLineup())
                 .drawInfo(concert.getDrawInfo())
                 .current(period)

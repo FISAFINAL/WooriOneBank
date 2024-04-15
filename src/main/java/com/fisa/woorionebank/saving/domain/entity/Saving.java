@@ -3,17 +3,13 @@ package com.fisa.woorionebank.saving.domain.entity;
 import com.fisa.woorionebank.account.entity.Account;
 import com.fisa.woorionebank.common.BaseEntity;
 import com.fisa.woorionebank.member.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Table(name = "saving")
 @Entity
