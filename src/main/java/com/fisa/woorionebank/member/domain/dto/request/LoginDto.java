@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.member.domain.dto.responseDto;
+package com.fisa.woorionebank.member.domain.dto.request;
 
 import lombok.*;
 
@@ -8,9 +8,8 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-public class ResponseLoginDto {
+public class LoginDto {
 
     private String id;
     private String password;
-    private String token;
 }

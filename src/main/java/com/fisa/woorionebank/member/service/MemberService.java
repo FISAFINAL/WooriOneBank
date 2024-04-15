@@ -1,6 +1,9 @@
 package com.fisa.woorionebank.member.service;
 
-import com.fisa.woorionebank.member.domain.dto.requestDto.RegisterDTO;
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
+import com.fisa.woorionebank.member.domain.dto.request.RegisterDTO;
+import com.fisa.woorionebank.member.domain.dto.response.MemberDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,34 +11,35 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
-    public Member createMember(RegisterDTO registerDTO) {
-        if (registerDTO == null) {
-            throw new RuntimeException("Invalid arguments");
-        }
+    public MemberDTO createMember(RegisterDTO registerDTO) {
 
-        if (memberRepository.existsByLoginId(registerDTO.getEmail())) {
-            log.warn("UserId already exists {}", registerDTO.getId());
-            throw new RuntimeException("이미 존재하는 아이디입니다.");
+        if (memberRepository.existsByLoginId(registerDTO.getId())) {
+            throw new CustomException(ErrorCode.DUPLICATE_MEMBER);
         }
 
         if (memberRepository.existsByEmail(registerDTO.getEmail())) {
-            log.warn("Email already exists {}", registerDTO.getEmail());
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
+
         Member member = Member.createMember(registerDTO, passwordEncoder.encode(registerDTO.getPassword()));
-        return memberRepository.save(member);
+
+        Member savedMember = memberRepository.save(member);
+
+
+        return MemberDTO.fromEntity(savedMember);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.fisa.woorionebank.member.domain.dto.requestDto;
+package com.fisa.woorionebank.member.domain.dto.request;
 
 import com.fisa.woorionebank.member.entity.Grade;
 import lombok.*;
@@ -6,11 +6,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 @Builder
-@ToString
 public class RegisterDTO {
-
     private String id;
 
     private String password;
@@ -21,5 +18,5 @@ public class RegisterDTO {
 
     private String email;
 
-    private Grade grade = Grade.VVIP;
+    private Grade grade = Grade.NONE;
 }
