@@ -53,7 +53,7 @@ public class Member extends BaseEntity {
         member.name = registerDTO.getName();
         member.age = registerDTO.getAge();
         member.email = registerDTO.getEmail();
-        member.grade = Grade.VIP; // TODO 추후 우리카드 데이터로 받아와야 합니다.
+        member.grade = Grade.VIP;
         return member;
     }
 
