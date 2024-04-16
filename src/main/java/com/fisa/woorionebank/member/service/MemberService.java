@@ -2,6 +2,7 @@ package com.fisa.woorionebank.member.service;
 
 import com.fisa.woorionebank.common.execption.CustomException;
 import com.fisa.woorionebank.common.execption.ErrorCode;
+import com.fisa.woorionebank.member.domain.dto.request.LoginDto;
 import com.fisa.woorionebank.member.domain.dto.request.RegisterDTO;
 import com.fisa.woorionebank.member.domain.dto.response.MemberDTO;
 import com.fisa.woorionebank.member.entity.Member;
@@ -42,4 +43,17 @@ public class MemberService {
         return MemberDTO.fromEntity(savedMember);
     }
 
+    @Transactional
+    public MemberDTO login(LoginDto loginDto) {
+
+        Member member = memberRepository.findByLoginId(loginDto.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_Member_Login));
+
+        if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_Member_Password);
+        }
+
+        return MemberDTO.fromEntity(member);
+
+    }
 }

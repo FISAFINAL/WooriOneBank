@@ -117,6 +117,18 @@ public class SavingService {
 
         return new SavingListDTO(savingDTOList);
     }
+    public SavingListDTO findSaving(Member member) {
+
+        // Saving : Member 다대이 양방향 연관관계
+        List<Saving> savingList = member.getSavings();
+
+        // List<Saving> ->  List<SavingDTO> 변환
+        List<SavingDTO> savingDTOList = savingList.stream()
+                .map(SavingDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new SavingListDTO(savingDTOList);
+    }
 
     /**
      * 최애 적금에 규칙 추가

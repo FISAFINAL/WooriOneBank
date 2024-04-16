@@ -2,12 +2,10 @@ package com.fisa.woorionebank.member.domain.dto.request;
 
 import lombok.*;
 
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@Builder
-@ToString
 public class LoginDto {
 
     private String id;

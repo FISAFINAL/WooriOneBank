@@ -30,13 +30,14 @@ public class MemberController {
         return ResponseEntity.ok(memberService.createMember(registerDTO));
     }
 
-    @GetMapping("/member/login")
-    public void loginMember(@RequestBody LoginDto loginDto) {
-
+    @PostMapping("/member/login")
+    public ResponseEntity<MemberDTO> loginMember(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok().body(memberService.login(loginDto));
     }
 
+    // jwt 테스트용 메소드입니다.
     @GetMapping("/member/get")
-    public String loginMember(@AuthenticationPrincipal Member member) {
-        return member.getName();
+    public String loginMember(@AuthenticationPrincipal Member member , @RequestBody LoginDto loginDto) {
+        return member.getName() + " " + loginDto.getId();
     }
 }
