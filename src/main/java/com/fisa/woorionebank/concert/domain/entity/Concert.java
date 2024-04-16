@@ -89,4 +89,34 @@ public class Concert extends BaseEntity {
         concert.imgUrl = concertDTO.getImgUrl();
         return concert;
     }
+
+    public static Concert of(
+            String concertName,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            LocalDateTime checkDate,
+            LocalDateTime ticketingDate,
+            LocalDateTime concertDate,
+            int runningTime,
+            String ageLimit,
+            String lineup,
+            String drawInfo,
+            String imgUrl,
+            ConcertVenue concertVenue
+    ){
+        return Concert.builder()
+                .concertName(concertName)
+                .startDate(startDate)
+                .endDate(endDate)
+                .checkDate(checkDate)
+                .ticketingDate(ticketingDate)
+                .concertDate(concertDate)
+                .runningTime(runningTime)
+                .ageLimit(ageLimit)
+                .lineup(lineup)
+                .drawInfo(drawInfo)
+                .imgUrl(imgUrl)
+                .concertVenue(concertVenue)
+                .build();
+    }
 }

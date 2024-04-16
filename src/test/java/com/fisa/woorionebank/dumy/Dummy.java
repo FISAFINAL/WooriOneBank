@@ -1,6 +1,8 @@
 package com.fisa.woorionebank.dumy;
 
 import com.fisa.woorionebank.account.entity.Account;
+import com.fisa.woorionebank.concert.domain.entity.Concert;
+import com.fisa.woorionebank.concert.domain.entity.ConcertVenue;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.saving.domain.entity.Celebrity;
@@ -8,6 +10,8 @@ import com.fisa.woorionebank.saving.domain.entity.Saving;
 import com.fisa.woorionebank.saving.domain.entity.SavingRule;
 import com.fisa.woorionebank.savinghistory.entity.SavingHistory;
 import com.fisa.woorionebank.savinghistory.entity.TransactionType;
+import com.fisa.woorionebank.seat.entity.Seat;
+import com.fisa.woorionebank.seat.entity.SeatClass;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,8 @@ import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @ActiveProfiles("local")
 @ExtendWith(SpringExtension.class) // 스프링이랑 JUnit 5를 통합해서 스프링 기능을 테스트에 사용가능 하게 하는 어노테이션!
@@ -97,5 +103,60 @@ public class Dummy {
         em.persist(savingHistory2);
         em.persist(savingHistory3);
         em.persist(savingHistory4);
+
+        // 콘서트
+
+        // 공연장
+        ConcertVenue concertVenue1 = ConcertVenue.of("올림픽공원 우리금융아트홀", "서울특별시 송파구 올림픽로 424", 60_000, null, null);
+        ConcertVenue concertVenue2 = ConcertVenue.of("상암디지털공연장", "서울특별시 마포구 상암산로 48-6", 1_000, null, null);
+        em.persist(concertVenue1);
+        em.persist(concertVenue2);
+
+        // 공연
+        Concert concert1 = Concert.of("2024 우리 원 더 스테이지", LocalDateTime.parse("2024-03-01T00:00:00"),
+                LocalDateTime.parse("2024-04-30T23:59:59").withNano(999999),
+                LocalDateTime.parse("2024-05-01T18:00:00"),
+                LocalDateTime.parse("2024-05-02T14:00:00"),
+                LocalDateTime.parse("2024-05-09T14:00:00"),
+                120, "만12세 이상 관람가", "아이유\n RIIZE(라이즈)\n 르세라핌\n 성시경\n Special MC\n 김해준, 츄",
+                "R석 - 우리카드 사용 고객 \n A석 : 최애 적금 가입 고객 B석 : 우리은행 원뱅크 가입 고객이면 누구나", "/img.png", concertVenue1);
+
+        Concert concert2 = Concert.of("하나플레이리스트 콘서트", LocalDateTime.parse("2023-08-01T00:00:00"),
+                LocalDateTime.parse("2023-08-30T23:59:59").withNano(999999),
+                LocalDateTime.parse("2023-08-31T18:00:00"),
+                LocalDateTime.parse("2023-09-01T14:00:00"),
+                LocalDateTime.parse("2023-09-16T14:00:00"),
+                120, "만12세 이상 관람가", "ZEROBASEONE, 멜로망스, 성시경, 싸이(PSY)",
+                "하나원큐 앱 사용자", "/img.png", concertVenue2);
+
+        em.persist(concert1);
+        em.persist(concert2);
+
+        // 좌석
+        List<Seat> seats = new ArrayList<>();
+
+        // 좌석 생성 및 List에 추가
+        for (int i = 1; i <= 10; i++) {
+            for (int j = 1; j <= 10; j++) {
+                String seatName = String.format("%d열 %d", i, j);
+                SeatClass seatClass;
+
+                if (i <= 3) {
+                    seatClass = SeatClass.R;
+                } else if (i <= 7) {
+                    seatClass = SeatClass.A;
+                } else {
+                    seatClass = SeatClass.B;
+                }
+
+                Seat seat = Seat.of(seatClass, seatName, i, j, concertVenue1);
+                seats.add(seat);
+            }
+        }
+
+        // 일괄 저장
+        for (Seat seat : seats) {
+            em.persist(seat);
+        }
     }
 }

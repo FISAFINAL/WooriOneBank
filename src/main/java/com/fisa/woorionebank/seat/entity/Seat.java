@@ -42,4 +42,20 @@ public class Seat {
                 '}';
     }
 
+    public static Seat of(
+            SeatClass seatClass,
+            String seatNumber,
+            int seatX,
+            int seatY,
+            ConcertVenue concertVenue
+    ){
+        return Seat.builder()
+                .seatClass(seatClass)
+                .seatNumber(seatNumber)
+                .seatX(seatX)
+                .seatY(seatY)
+                .concertVenue(concertVenue)
+                .build();
+    }
+
 }
