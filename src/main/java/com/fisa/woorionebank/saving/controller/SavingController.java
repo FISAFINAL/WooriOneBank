@@ -1,5 +1,6 @@
 package com.fisa.woorionebank.saving.controller;
 
+import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingAddRuleRequestDTO;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingCreateRequestDTO;
 import com.fisa.woorionebank.saving.domain.responsedto.*;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,6 +32,11 @@ public class SavingController {
     @GetMapping("/{memberId}")
     public ResponseEntity<SavingListDTO> findSavings(@PathVariable("memberId") Long memberId) {
         return ResponseEntity.ok(savingService.findSavings(memberId));
+    }
+    @Operation(summary = "최애적금 조회", description = "회원이 생성한 최애적금 리스트를 조회합니다.")
+    @GetMapping()
+    public ResponseEntity<SavingListDTO> findSaving(@AuthenticationPrincipal Member member) {
+        return ResponseEntity.ok(savingService.findSaving(member));
     }
 
     @Operation(summary = "최애적금 규칙 추가", description = "선택한 최애적금에 규칙이름과 규칙 비용을 추가합니다.")

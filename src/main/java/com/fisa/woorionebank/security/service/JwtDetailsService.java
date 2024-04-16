@@ -1,5 +1,7 @@
 package com.fisa.woorionebank.security.service;
 
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.security.user.PrincipalDetails;
@@ -20,7 +22,8 @@ public class JwtDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         log.info("JwtDetailsService 유저 조회");
-        Member member = memberRepository.findByLoginId(loginId);
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Member));
         return new PrincipalDetails(member);
     }
 }
