@@ -4,7 +4,8 @@ import lombok.*;
 
 @Getter
 @Builder
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class RequestDrawDTO {
     private Long concertId;
 }

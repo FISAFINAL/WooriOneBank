@@ -1,5 +1,8 @@
 package com.fisa.woorionebank.concert.service;
 
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
+import com.fisa.woorionebank.concert.domain.dto.response.ConcertApplyDTO;
 import com.fisa.woorionebank.concert.domain.dto.response.WinnersCountDTO;
 import com.fisa.woorionebank.concert.domain.entity.Area;
 import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
@@ -7,31 +10,42 @@ import com.fisa.woorionebank.concert.domain.entity.Status;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ConcertDrawService {
     private final ConcertHistoryRepository concertHistoryRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public WinnersCountDTO drawConcert(Long concertId) {
-        List<Member> memberList = concertHistoryRepository.findMemberByConcertId(concertId);
+        List<Long> memberList = concertHistoryRepository.findMemberByStatusAndConcertId(Status.APPLY, concertId);
 
-        int seatAvailableR = 10_000;
-        int seatAvailableA = 30_000;
-        int seatAvailableB = 20_000;
+        log.info("멤버 리스트 : {}", memberList.get(0));
+
+//        int seatAvailableR = 10_000;
+//        int seatAvailableA = 30_000;
+//        int seatAvailableB = 20_000;
+        int seatAvailableR = 1;
+        int seatAvailableA = 2;
+        int seatAvailableB = 3;
 
         // R석 당첨자 뽑기 - 우리카드 실적 높은 사람(1만)
         Map<Integer, Member> winnersR = drawRandomWinners(seatAvailableR, createWinnerPool(memberList));
+        log.info("{}", winnersR);
         updateWinners(winnersR, Area.R, concertId);
+        log.info("{}", winnersR);
 
         // A석 당첨자 뽑기 - 적금 가입 고객(3만)
         List<ConcertHistory> concertHistoriesA = concertHistoryRepository.findByStatusAndConcertId(Status.APPLY, concertId);
@@ -47,17 +61,24 @@ public class ConcertDrawService {
         Map<Integer, Member> winnersB = Collections.emptyMap();
 
         if(!concertHistoriesB.isEmpty()) {
-            winnersB = drawRandomWinners(seatAvailableB, createWinnerPool(concertHistoriesB.stream().map(ConcertHistory::getMember).collect(Collectors.toList())));
+            winnersB = drawRandomWinners(seatAvailableB, createWinnerPool(concertHistoriesB.stream().map(concertHistory -> concertHistory.getMember().getMemberId()).collect(Collectors.toList())));
+
+//            winnersB = drawRandomWinners(seatAvailableB, createWinnerPool(concertHistoriesB.stream().map(ConcertHistory::getMember).collect(Collectors.toList())));
             updateWinners(winnersB, Area.B, concertId);
         }
 
-        return new WinnersCountDTO(winnersR.size(), winnersA.size(), winnersB.size());
+        return WinnersCountDTO.builder()
+                .winnersR(winnersR.size())
+                .winnersA(winnersA.size())
+                .winnersB(winnersB.size())
+                .build();
     }
 
-    private List<Member> createWinnerPool(List<Member> memberList) {
+    private List<Member> createWinnerPool(List<Long> memberList) {
         List<Member> winnerPool = new ArrayList<>();
 
-        for (Member m : memberList) {
+        for (Long id : memberList) {
+            Member m = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Member));
             int point = transferPoint(m.getGrade());
 
             for (int i = 0; i < point; i++) {
@@ -118,6 +139,7 @@ public class ConcertDrawService {
     private void updateWinners(Map<Integer, Member> winners, Area status, Long concertId) {
         for (Member winner : winners.values()) {
             ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
+            log.info("{}", winner.getName());
 
             if (concertHistory != null) {
                 concertHistory.win(status);

@@ -48,16 +48,16 @@ public class ConcertVenue extends BaseEntity {
     public static ConcertVenue of(
             String venueName,
             String venueAddress,
-            int capacity,
-            List<Concert> concerts,
-            List<Seat> seats
+            int capacity
+//            List<Concert> concerts,
+//            List<Seat> seats
     ){
         return ConcertVenue.builder()
                 .venueName(venueName)
                 .venueAddress(venueAddress)
                 .capacity(capacity)
-                .concerts(concerts)
-                .seats(seats)
+//                .concerts(concerts)
+//                .seats(seats)
                 .build();
     }
 }

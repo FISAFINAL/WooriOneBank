@@ -168,7 +168,7 @@ public class Dummy {
         ConcertHistory concertHistory1 = ConcertHistory.of(Status.SUCCESS, Area.A, LocalDateTime.parse("2024-05-09T14:00:02"), member1, seats.get(1), concert1);
         ConcertHistory concertHistory2 = ConcertHistory.of(Status.APPLY, null, null, member2, null, concert1);
         ConcertHistory concertHistory3 = ConcertHistory.of(Status.WIN, Area.R, null, member3, null, concert1);
-        ConcertHistory concertHistory4 = ConcertHistory.of(Status.SUCCESS, Area.R, LocalDateTime.parse("2024-05-02T19:00:01"), member4, seats.get(0), concert1);
+        ConcertHistory concertHistory4 = ConcertHistory.of(Status.SUCCESS, Area.R, LocalDateTime.parse("2024-05-09T19:00:01"), member4, seats.get(0), concert1);
         ConcertHistory concertHistory5 = ConcertHistory.of(Status.WIN, Area.B, null, member5, null, concert1);
 
 //        ConcertHistory concertHistory1 = ConcertHistory.of(Status.APPLY, null, null, member1, null, concert1);

@@ -46,8 +46,9 @@ public class ConcertController {
      * 우리 원 더 스테이지 응모 당첨
      * */
     @Operation(summary = "공연 당첨자 선발", description = "5/1 0시 ~ 5/1 18시 이전에 공연 당첨자를 선발합니다.")
-    @GetMapping("/draw")
-    public ResponseEntity<WinnersCountDTO> drawConcert(@RequestParam Long concertId) {
+    @GetMapping("/draw/winner")
+    public ResponseEntity<WinnersCountDTO> drawConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+        log.info("controller 들어옴 {}", concertId);
         return ResponseEntity.ok().body(concertDrawService.drawConcert(concertId));
     }
 
