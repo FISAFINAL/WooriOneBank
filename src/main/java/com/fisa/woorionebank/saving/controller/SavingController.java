@@ -1,6 +1,7 @@
 package com.fisa.woorionebank.saving.controller;
 
 import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingAddRuleRequestDTO;
 import com.fisa.woorionebank.saving.domain.requestdto.SavingCreateRequestDTO;
 import com.fisa.woorionebank.saving.domain.responsedto.*;
@@ -11,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/saving")
@@ -36,6 +40,8 @@ public class SavingController {
     @Operation(summary = "최애적금 조회", description = "회원이 생성한 최애적금 리스트를 조회합니다.")
     @GetMapping()
     public ResponseEntity<SavingListDTO> findSaving(@AuthenticationPrincipal Member member) {
+        System.out.println("controller : " + member.getMemberId());
+
         return ResponseEntity.ok(savingService.findSaving(member));
     }
 
@@ -48,6 +54,7 @@ public class SavingController {
     @Operation(summary = "최애적금 규칙 조회", description = "선택한 최애적금의 규칙 리스트를 조회합니다.")
     @GetMapping("/rules/{savingId}")
     public ResponseEntity<RuleListDTO> findRules(@PathVariable("savingId") Long savingId) {
+        System.out.println("/rules/{savingId} 호출");
         return ResponseEntity.ok(savingService.findRules(savingId));
     }
 

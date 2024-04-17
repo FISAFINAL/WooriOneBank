@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class SavingHistory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "saving_history_id")
     private Long savingHistoryId;
 

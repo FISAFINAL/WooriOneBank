@@ -44,6 +44,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new BadCredentialsException("회원 아이디와 비밀번호를 다시 확인해주세요. 빈값은 넣을 수 없습니다.");
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginId, pwd);
+
+
         return getAuthenticationManager().authenticate(authenticationToken);
     }
 

@@ -117,6 +117,7 @@ public class SavingService {
 
         return new SavingListDTO(savingDTOList);
     }
+    @Transactional
     public SavingListDTO findSaving(Member member) {
 
         // Saving : Member 다대이 양방향 연관관계
@@ -247,7 +248,7 @@ public class SavingService {
                 .collect(Collectors.toList());
 
         // 금리 계산
-        BigDecimal nowInterestRate = calculateInterestRate(saving.getOverdueWeek());
+        BigDecimal nowInterestRate = calculateRate(saving.getOverdueWeek(), saving.getCurrentWeek());
 
         return new SavingInfoDTO(savingDTO, historyDTOList, nowInterestRate);
 
@@ -272,7 +273,33 @@ public class SavingService {
         ));
     }
 
-    private BigDecimal calculateInterestRate(int overdueWeek) {
+
+
+    private BigDecimal calculateRate(int overdueWeek, int currentWeek) {
+        if (currentWeek >= 1 && currentWeek <= 7) {
+            return BigDecimal.valueOf(3.50);
+        } else if (currentWeek >= 8 && currentWeek <= 26) {
+            return calculateRateWithinRange(overdueWeek);
+        } else if (currentWeek > 26) {
+            return calculateRateExceedRange(overdueWeek);
+        } else {
+            throw new CustomException(ErrorCode.INVALID_OVERDUE_WEEK);
+        }
+    }
+
+    private BigDecimal calculateRateWithinRange(int overdueWeek) {
+        if (overdueWeek >= 1 && overdueWeek <= 7) {
+            return BigDecimal.valueOf(3.50);
+        } else if (overdueWeek >= 8 && overdueWeek <= 26) {
+            return BigDecimal.valueOf(4.50);
+        } else if (overdueWeek == 0) {
+            return BigDecimal.valueOf(4.50);
+        } else {
+            throw new CustomException(ErrorCode.INVALID_OVERDUE_WEEK);
+        }
+    }
+
+    private BigDecimal calculateRateExceedRange(int overdueWeek) {
         if (overdueWeek >= 1 && overdueWeek <= 7) {
             return BigDecimal.valueOf(3.50);
         } else if (overdueWeek >= 8 && overdueWeek <= 26) {
