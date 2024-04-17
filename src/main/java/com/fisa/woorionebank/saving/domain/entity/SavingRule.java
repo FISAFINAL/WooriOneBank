@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class SavingRule extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "saving_rule_id")
     private Long savingRuleId;
 

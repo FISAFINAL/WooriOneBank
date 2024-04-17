@@ -21,7 +21,7 @@ import java.util.List;
 public class ConcertVenue extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "concert_venue_id")
     private Long concertVenueId;
 

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Saving extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "saving_id")
     private Long savingId;
 

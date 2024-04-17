@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Entity
 public class Account extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long accountId;
 

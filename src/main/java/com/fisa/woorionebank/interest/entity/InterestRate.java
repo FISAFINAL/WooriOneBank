@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class InterestRate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "interest_id")
     private Long interestId;
 

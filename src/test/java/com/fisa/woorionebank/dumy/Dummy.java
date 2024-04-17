@@ -49,6 +49,10 @@ public class Dummy {
         Account account2 = Account.of("국민은행", "10042222", BigDecimal.valueOf(1_000_000), member1);
         Account account3 = Account.of("우리은행", "10043333", BigDecimal.valueOf(100_000), member2);
         Account account4 = Account.of("우리은행", "10044444", BigDecimal.valueOf(100_000), member3);
+        member1.addAccount(account1);
+        member1.addAccount(account2);
+        member2.addAccount(account3);
+        member3.addAccount(account4);
         em.persist(account1);
         em.persist(account2);
         em.persist(account3);
@@ -77,6 +81,8 @@ public class Dummy {
                 LocalDateTime.now().plus(26, ChronoUnit.WEEKS),
                 BigDecimal.valueOf(10_000),
                 account1, member1, celebrity2);
+        member1.addSaving(saving1);
+        member1.addSaving(saving2);
         em.persist(saving1);
         em.persist(saving2);
 

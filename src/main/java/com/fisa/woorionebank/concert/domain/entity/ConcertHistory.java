@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 public class ConcertHistory extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "concert_reservation_id")
     private Long concertReservationId;
 

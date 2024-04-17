@@ -35,7 +35,7 @@ public class SavingDTO {
                 .endDate(saving.getEndDate())
                 .totalAmount(saving.getTotalAmount())
                 .celebrityName(saving.getCelebrity().getCelebrityName())
-                .celebrityName(saving.getCelebrity().getCelebrityUrl())
+                .celebrityUrl(saving.getCelebrity().getCelebrityUrl())
                 .build();
     }
 
