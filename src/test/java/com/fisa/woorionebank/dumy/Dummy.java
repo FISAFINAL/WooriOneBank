@@ -1,8 +1,7 @@
 package com.fisa.woorionebank.dumy;
 
 import com.fisa.woorionebank.account.entity.Account;
-import com.fisa.woorionebank.concert.domain.entity.Concert;
-import com.fisa.woorionebank.concert.domain.entity.ConcertVenue;
+import com.fisa.woorionebank.concert.domain.entity.*;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.saving.domain.entity.Celebrity;
@@ -113,8 +112,8 @@ public class Dummy {
         // 콘서트
 
         // 공연장
-        ConcertVenue concertVenue1 = ConcertVenue.of("올림픽공원 우리금융아트홀", "서울특별시 송파구 올림픽로 424", 60_000, null, null);
-        ConcertVenue concertVenue2 = ConcertVenue.of("상암디지털공연장", "서울특별시 마포구 상암산로 48-6", 1_000, null, null);
+        ConcertVenue concertVenue1 = ConcertVenue.of("올림픽공원 우리금융아트홀", "서울특별시 송파구 올림픽로 424", 60_000);
+        ConcertVenue concertVenue2 = ConcertVenue.of("상암디지털공연장", "서울특별시 마포구 상암산로 48-6", 1_000);
         em.persist(concertVenue1);
         em.persist(concertVenue2);
 
@@ -122,7 +121,7 @@ public class Dummy {
         Concert concert1 = Concert.of("2024 우리 원 더 스테이지", LocalDateTime.parse("2024-03-01T00:00:00"),
                 LocalDateTime.parse("2024-04-30T23:59:59").withNano(999999),
                 LocalDateTime.parse("2024-05-01T18:00:00"),
-                LocalDateTime.parse("2024-05-02T14:00:00"),
+                LocalDateTime.parse("2024-05-02T19:00:00"),
                 LocalDateTime.parse("2024-05-09T14:00:00"),
                 120, "만12세 이상 관람가", "아이유\n RIIZE(라이즈)\n 르세라핌\n 성시경\n Special MC\n 김해준, 츄",
                 "R석 - 우리카드 사용 고객 \n A석 : 최애 적금 가입 고객 B석 : 우리은행 원뱅크 가입 고객이면 누구나", "/img.png", concertVenue1);
@@ -164,5 +163,24 @@ public class Dummy {
         for (Seat seat : seats) {
             em.persist(seat);
         }
+
+        // 공연 신청 내역
+        ConcertHistory concertHistory1 = ConcertHistory.of(Status.SUCCESS, Area.A, LocalDateTime.parse("2024-05-09T14:00:02"), member1, seats.get(1), concert1);
+        ConcertHistory concertHistory2 = ConcertHistory.of(Status.APPLY, null, null, member2, null, concert1);
+        ConcertHistory concertHistory3 = ConcertHistory.of(Status.WIN, Area.R, null, member3, null, concert1);
+        ConcertHistory concertHistory4 = ConcertHistory.of(Status.SUCCESS, Area.R, LocalDateTime.parse("2024-05-02T19:00:01"), member4, seats.get(0), concert1);
+        ConcertHistory concertHistory5 = ConcertHistory.of(Status.WIN, Area.B, null, member5, null, concert1);
+
+//        ConcertHistory concertHistory1 = ConcertHistory.of(Status.APPLY, null, null, member1, null, concert1);
+//        ConcertHistory concertHistory2 = ConcertHistory.of(Status.APPLY, null, null, member2, null, concert1);
+//        ConcertHistory concertHistory3 = ConcertHistory.of(Status.APPLY, null, null, member3, null, concert1);
+//        ConcertHistory concertHistory4 = ConcertHistory.of(Status.APPLY, null, null, member4, null, concert1);
+//        ConcertHistory concertHistory5 = ConcertHistory.of(Status.APPLY, null, null, member5, null, concert1);
+
+        em.persist(concertHistory1);
+        em.persist(concertHistory2);
+        em.persist(concertHistory3);
+        em.persist(concertHistory4);
+        em.persist(concertHistory5);
     }
 }
