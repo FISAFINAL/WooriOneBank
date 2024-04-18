@@ -25,13 +25,12 @@ public enum ErrorCode implements EnumModel {
 	DUPLICATE_EMAIL(400, "M003", "중복된 이메일 입니다."),
 
 	// 콘서트
-	ALREADY_APPLIED_Concert(500, "C001", "이미 공연을 응모한 회원입니다."),
+	ALREADY_APPLIED_CONCERT(500, "C001", "이미 공연을 응모한 회원입니다."),
 	ALREADY_RESERVED_SEAT(500, "C002", "이미 선택된 좌석입니다."),
 	INVALID_TICKETING(500, "C003", "공연을 응모하지 않은 회원입니다."),
 	NOT_WIN_Member(500, "C004", "당첨되지 않은 회원입니다."),
-	ON_SITE_TICKETING(500, "C004", "티켓 현장 수령 회원입니다."),
-
-
+	ON_SITE_TICKETING(500, "C005", "티켓 현장 수령 회원입니다."),
+	ALREADY_BOOKED_CONCERT(500, "C006", "이미 티켓팅을 완료한 회원입니다."),
 
 	// 통장 -> 적금 이체할때 잔액 부족
 	INSUFFICIENT_FUNDS(600, "A002", "적금에 입금할 통장 잔액이 부족합니다."),

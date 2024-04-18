@@ -61,7 +61,7 @@ public class ConcertService {
                     concert
             )));
 
-        } else throw new CustomException(ErrorCode.ALREADY_APPLIED_Concert);
+        } else throw new CustomException(ErrorCode.ALREADY_APPLIED_CONCERT);
 
         return ConcertApplyDTO.fromEntity(appliedConcert);
     }
@@ -70,15 +70,18 @@ public class ConcertService {
         final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
 
-        return new ResponseDrawDTO(concertHistory.getConcert().getConcertName(), member.getName(), concertHistory.getArea());
+        PeriodType period = ConcertUtils.calculatePeriod(concertHistory.getConcert());
+
+        return new ResponseDrawDTO(concertHistory.getConcert().getConcertName(), member.getName(), concertHistory.getArea(), concertHistory.getStatus(), period);
     }
 
     public ReserveAvailableDTO reserveAvailable(Member member, Long concertId) {
         final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
 
-        if (concertHistory.getStatus() == Status.WIN) return new ReserveAvailableDTO(true);
-        else throw new CustomException(ErrorCode.INVALID_TICKETING);
+        if(concertHistory.getStatus() == Status.WIN) return new ReserveAvailableDTO(true);
+        else if(concertHistory.getStatus() == Status.SUCCESS) throw new CustomException(ErrorCode.ALREADY_BOOKED_CONCERT);
+        else throw new CustomException(ErrorCode.NOT_WIN_Member);
     }
 
     public SeatListDTO selectSeat(Long concertId) {
