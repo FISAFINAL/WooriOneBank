@@ -2,7 +2,6 @@ package com.fisa.woorionebank.concert.service;
 
 import com.fisa.woorionebank.common.execption.CustomException;
 import com.fisa.woorionebank.common.execption.ErrorCode;
-import com.fisa.woorionebank.concert.domain.dto.response.ConcertApplyDTO;
 import com.fisa.woorionebank.concert.domain.dto.response.WinnersCountDTO;
 import com.fisa.woorionebank.concert.domain.entity.Area;
 import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
@@ -13,14 +12,12 @@ import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,8 +29,6 @@ public class ConcertDrawService {
     public WinnersCountDTO drawConcert(Long concertId) {
         List<Long> memberList = concertHistoryRepository.findMemberByStatusAndConcertId(Status.APPLY, concertId);
 
-        log.info("멤버 리스트 : {}", memberList.get(0));
-
 //        int seatAvailableR = 10_000;
 //        int seatAvailableA = 30_000;
 //        int seatAvailableB = 20_000;
@@ -43,9 +38,7 @@ public class ConcertDrawService {
 
         // R석 당첨자 뽑기 - 우리카드 실적 높은 사람(1만)
         Map<Integer, Member> winnersR = drawRandomWinners(seatAvailableR, createWinnerPool(memberList));
-        log.info("{}", winnersR);
         updateWinners(winnersR, Area.R, concertId);
-        log.info("{}", winnersR);
 
         // A석 당첨자 뽑기 - 적금 가입 고객(3만)
         List<ConcertHistory> concertHistoriesA = concertHistoryRepository.findByStatusAndConcertId(Status.APPLY, concertId);
@@ -62,8 +55,6 @@ public class ConcertDrawService {
 
         if(!concertHistoriesB.isEmpty()) {
             winnersB = drawRandomWinners(seatAvailableB, createWinnerPool(concertHistoriesB.stream().map(concertHistory -> concertHistory.getMember().getMemberId()).collect(Collectors.toList())));
-
-//            winnersB = drawRandomWinners(seatAvailableB, createWinnerPool(concertHistoriesB.stream().map(ConcertHistory::getMember).collect(Collectors.toList())));
             updateWinners(winnersB, Area.B, concertId);
         }
 
@@ -119,7 +110,8 @@ public class ConcertDrawService {
         Random random = new Random();
 
         for (ConcertHistory concertHistory : concertHistoriesA) {
-            List<Saving> saving = concertHistory.getMember().getSavings();
+            Member m = memberRepository.findById(concertHistory.getMember().getMemberId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Member));
+            List<Saving> saving = m.getSavings();
 
             if (!saving.isEmpty()) {
                 winnerPool.add(concertHistory.getMember());
@@ -129,6 +121,7 @@ public class ConcertDrawService {
         int numWinnersA = Math.min(seatAvailableA, concertHistoriesA.size());
 
         for (int i = 0; i < numWinnersA; i++) {
+            if (winnerPool.size() == 0) break;
             int index = random.nextInt(winnerPool.size());
             winners.put(i, winnerPool.remove(index));
         }
@@ -139,7 +132,6 @@ public class ConcertDrawService {
     private void updateWinners(Map<Integer, Member> winners, Area status, Long concertId) {
         for (Member winner : winners.values()) {
             ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(winner.getMemberId(), concertId).orElse(null);
-            log.info("{}", winner.getName());
 
             if (concertHistory != null) {
                 concertHistory.win(status);

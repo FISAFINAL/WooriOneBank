@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/concert")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "공연 API", description = "공연 응모, 예매 관련 기능")
 public class ConcertController {
     private final ConcertService concertService;
@@ -48,7 +47,6 @@ public class ConcertController {
     @Operation(summary = "공연 당첨자 선발", description = "5/1 0시 ~ 5/1 18시 이전에 공연 당첨자를 선발합니다.")
     @GetMapping("/draw/winner")
     public ResponseEntity<WinnersCountDTO> drawConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
-        log.info("controller 들어옴 {}", concertId);
         return ResponseEntity.ok().body(concertDrawService.drawConcert(concertId));
     }
 
