@@ -37,6 +37,8 @@ public class ResponseConcertDTO {
 
     private PeriodType current; // 현재 시점(지금이 응모 기간인지 체크하기 위함)
 
+    private String concertVenue; // 공연장 이름
+
     public static ResponseConcertDTO fromEntity(Concert concert, PeriodType period) {
         return ResponseConcertDTO.builder()
                 .concertName(concert.getConcertName())
@@ -51,7 +53,7 @@ public class ResponseConcertDTO {
                 .lineup(concert.getLineup())
                 .drawInfo(concert.getDrawInfo())
                 .current(period)
+                .concertVenue(concert.getConcertVenue().getVenueName())
                 .build();
     }
-
 }
