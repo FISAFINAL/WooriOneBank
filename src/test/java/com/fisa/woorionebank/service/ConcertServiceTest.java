@@ -1,6 +1,8 @@
 package com.fisa.woorionebank.service;
 
 
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
 import com.fisa.woorionebank.concert.domain.dto.request.ConcertDTO;
 import com.fisa.woorionebank.concert.domain.dto.request.RequestDrawDTO;
 import com.fisa.woorionebank.concert.domain.dto.response.ConcertReserveDTO;
@@ -146,6 +148,26 @@ public class ConcertServiceTest {
                 .concertId(1L)
                 .seatX(1)
                 .seatY(1)
+                .build();
+
+        // when
+        concertService.reserveSeat(member, requestSeatDTO);
+
+        // then
+        ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), requestSeatDTO.getConcertId()).orElse(null);
+        assertThat(concertHistory.getStatus()).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
+    public void 티켓팅() throws Exception {
+
+        Member member = memberRepository.findById(1L)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Member));
+
+        RequestSeatDTO requestSeatDTO = RequestSeatDTO.builder()
+                .concertId(1L)
+                .seatX(10)
+                .seatY(11)
                 .build();
 
         // when

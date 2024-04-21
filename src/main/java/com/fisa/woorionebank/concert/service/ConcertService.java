@@ -10,6 +10,7 @@ import com.fisa.woorionebank.concert.domain.entity.Status;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.concert.util.ConcertUtils;
+import com.fisa.woorionebank.config.redisson.DistributedLock;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.seat.domain.dto.RequestSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
@@ -119,10 +120,34 @@ public class ConcertService {
         Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Seat));
 
-        // 이미 선택된 좌석 확인
+        // 이미 선택된 좌석 확인 , 선택되지 않았으면 seat가 null
         Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId());
 
         if(!c.isPresent()) {
+            ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
+
+            concertHistory.reserve(seat);
+            concertHistoryRepository.save(concertHistory);
+
+            return ConcertReserveDTO.fromEntity(concertHistory);
+        }
+
+        throw new CustomException(ErrorCode.ALREADY_RESERVED_SEAT);
+    }
+
+    /**
+     * 분산락 티켓팅
+     */
+    @DistributedLock(key = "#lockName")
+    public ConcertReserveDTO reserveSeat2(String lockName, Member member, RequestSeatDTO seatDTO) {
+        Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Seat));
+
+        // 이미 선택된 좌석 확인 , 선택되지 않았으면 seat가 null
+        Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId());
+
+        if (!c.isPresent()) {
             ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId())
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
 

@@ -4,6 +4,7 @@ import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
 import com.fisa.woorionebank.concert.domain.entity.Status;
 import com.fisa.woorionebank.concert.repository.querydsl.ConcertHistoryRepositoryCustom;
 import com.fisa.woorionebank.member.entity.Member;
+import com.fisa.woorionebank.seat.entity.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
@@ -22,5 +23,10 @@ public interface ConcertHistoryRepository extends JpaRepository<ConcertHistory, 
 
     @Query("select c from ConcertHistory c where c.seat.seatId = ?1 and c.concert.concertId = ?2")
     Optional<ConcertHistory> findBySeatIdAndConcertId(Long seatId, Long concertId);
+
+    @Query("select c from ConcertHistory c where c.seat.seatId = ?1")
+    List<ConcertHistory> findBySeat2(Long seatId);
+
+    List<ConcertHistory> findBySeat(Seat seat);
 
 }

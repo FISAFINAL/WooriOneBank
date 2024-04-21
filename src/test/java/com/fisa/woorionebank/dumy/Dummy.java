@@ -109,7 +109,10 @@ public class Dummy {
         em.persist(savingHistory3);
         em.persist(savingHistory4);
 
-        // 콘서트
+
+        /**
+         * 콘서트
+         */
 
         // 공연장
         ConcertVenue concertVenue1 = ConcertVenue.of("올림픽공원 우리금융아트홀", "서울특별시 송파구 올림픽로 424", 60_000);
