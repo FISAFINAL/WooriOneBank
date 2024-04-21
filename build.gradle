@@ -54,6 +54,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.7.11'
 
+	// 레디스
+	implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
+
 }
 
 tasks.named('bootBuildImage') {
