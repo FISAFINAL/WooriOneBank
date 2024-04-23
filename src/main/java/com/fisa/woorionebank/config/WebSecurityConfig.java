@@ -41,14 +41,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .cors().configurationSource(corsConfig.corsFilter())
-                .and()
                 .authorizeRequests()
-                .antMatchers("/swagger-resources/**","/auth/**", "/api/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
-                            "/swagger/**", "/api-docs/**", "/api/member/signup").permitAll()
+                .antMatchers("/swagger-ui/**","/swagger-resources/**","/auth/**", "/api/**", "/swagger-ui.html", "/v3/api-docs/**",
+                        "/swagger/**", "/api-docs/**", "/api/member/signup").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
+                .addFilter(corsConfig.corsFilter())
                 .addFilter(jwtAuthenticationFilter())
                 .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
