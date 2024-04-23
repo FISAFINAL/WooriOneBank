@@ -29,4 +29,6 @@ public interface ConcertHistoryRepository extends JpaRepository<ConcertHistory, 
 
     List<ConcertHistory> findBySeat(Seat seat);
 
+    @Query("select c from ConcertHistory c where c.status = ?1")
+    List<ConcertHistory> findBySuccess(Status status);
 }

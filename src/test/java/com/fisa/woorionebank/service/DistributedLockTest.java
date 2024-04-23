@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.*;
 
 @ActiveProfiles("local")
-@ExtendWith(SpringExtension.class) // 스프링이랑 JUnit 5를 통합해서 스프링 기능을 테스트에 사용가능 하게 하는 어노테이션!
+//@ExtendWith(SpringExtension.class) // 스프링이랑 JUnit 5를 통합해서 스프링 기능을 테스트에 사용가능 하게 하는 어노테이션!
 @SpringBootTest
 @Transactional
 public class DistributedLockTest {
@@ -86,6 +86,7 @@ public class DistributedLockTest {
 
 
     @Test
+    @Rollback
     public void 티켓팅_100명_LockX() throws Exception{
 
         List<Member> memberList = memberRepository.findAll();
@@ -121,12 +122,13 @@ public class DistributedLockTest {
 
         latch.await();
 
-        List<ConcertHistory> bySeat = concertHistoryRepository.findBySeat(seat);
+        List<ConcertHistory> bySeat = concertHistoryRepository.findBySeat2(seat.getSeatId());
 
         assertThat(bySeat.size()).isEqualTo(1);
     }
 
     @Test
+    @Rollback
     public void 티켓팅_100명_분산Lock() throws Exception{
 
         List<Member> memberList = memberRepository.findAll();
@@ -162,11 +164,17 @@ public class DistributedLockTest {
 
         latch.await();
 
-        List<ConcertHistory> bySeat = concertHistoryRepository.findBySeat(seat);
+        System.out.println(seat.getSeatId() + " Seat ID @@@@@");
+        List<ConcertHistory> bySeat = concertHistoryRepository.findBySuccess(Status.SUCCESS);
 
         assertThat(bySeat.size()).isEqualTo(1);
     }
 
+    @Test
+    public void 콘서트리스트조회() throws Exception{
+        List<ConcertHistory> bySeat = concertHistoryRepository.findBySuccess(Status.SUCCESS);
+        assertThat(bySeat.size()).isEqualTo(1);
+    }
 
 }
 
