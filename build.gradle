@@ -57,6 +57,10 @@ dependencies {
 	// 레디스
 	implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
 
+	// 엘라스틱
+	implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+
+
 }
 
 tasks.named('bootBuildImage') {

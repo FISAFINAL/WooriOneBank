@@ -8,10 +8,10 @@
     <!--파일 저장시 로그 형태-->
     <property name="FILE_LOG_PATTERN" value="%-5level %d{yyyy-MM-dd HH:mm:ss.SSS} ${PID:- } --- [%t] - %msg%n"/>
 
-    <property name="LOGSTASH_URL" value="127.0.0.1:5000"/>
+    <property name="LOGSTASH_URL" value="127.0.0.1:50000"/>
 
-    <!--logstash 로 보낼 로그 설정-->
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+
+    <appender name="LOGSTASH" class="ch.qos.logback.core.ConsoleAppender">
         <destination>${LOGSTASH_URL}</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
         </encoder>
