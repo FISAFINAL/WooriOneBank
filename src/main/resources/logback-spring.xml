@@ -2,16 +2,31 @@
 <configuration scan="true" scanPeriod="60 seconds">
 
     <!--파일 경로, 이름-->
-    <property name="LOG_PATH" value="/var/logs"/>
+    <property name="LOG_PATH" value="./var/logs"/>
     <property name="LOG_FILE_NAME" value="log"/>
     <property name="ERR_LOG_FILE_NAME" value="error_log"/>
     <!--파일 저장시 로그 형태-->
     <property name="FILE_LOG_PATTERN" value="%-5level %d{yyyy-MM-dd HH:mm:ss.SSS} ${PID:- } --- [%t] - %msg%n"/>
 
-    <property name="LOGSTASH_URL" value="127.0.0.1:50000"/>
+    <property name="LOGSTASH_URL" value="127.0.0.1:5000"/>
 
 
-    <appender name="LOGSTASH" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- 콘솔로그 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %magenta([%thread]) %highlight(%5level) %cyan(%logger) - %yellow(%msg%n)</pattern>
+        </encoder>
+        <!-- 콘솔로그의 레벨을 INFO로 설정 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <!--logstash 로 보낼 로그 설정-->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>${LOGSTASH_URL}</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
         </encoder>
@@ -53,11 +68,13 @@
 
 
     <!--에러 레벨 이상 제어-->
-    <root level="ERROR">
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="LOGSTASH" />
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </root>
+
 
 </configuration>
 
