@@ -8,7 +8,8 @@
     <!--파일 저장시 로그 형태-->
     <property name="FILE_LOG_PATTERN" value="%-5level %d{yyyy-MM-dd HH:mm:ss.SSS} ${PID:- } --- [%t] - %msg%n"/>
 
-    <property name="LOGSTASH_URL" value="127.0.0.1:5000"/>
+    <property name="LOGSTASH_URL" value="3.35.114.211:5000"/>
+
 
     <!-- 콘솔로그 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -17,7 +18,7 @@
         </encoder>
         <!-- 콘솔로그의 레벨을 INFO로 설정 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
+            <level>INFO</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
@@ -76,4 +77,3 @@
 
 
 </configuration>
-
