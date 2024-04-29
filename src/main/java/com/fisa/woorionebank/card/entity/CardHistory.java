@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
 @Entity
 public class CardHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_history_id")
     private Long cardHistoryId;
 
     private char BAS_YH;
 
-    
     private char AGE;
+
 }

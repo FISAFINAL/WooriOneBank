@@ -2,8 +2,8 @@ package com.fisa.woorionebank.member.entity;
 
 import com.fisa.woorionebank.account.entity.Account;
 import com.fisa.woorionebank.common.BaseEntity;
-import com.fisa.woorionebank.member.domain.dto.MemberDTO;
-import com.fisa.woorionebank.saving.entity.Saving;
+import com.fisa.woorionebank.member.domain.dto.request.RegisterDTO;
+import com.fisa.woorionebank.saving.domain.entity.Saving;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import java.util.List;
 public class Member extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
 
@@ -46,14 +46,32 @@ public class Member extends BaseEntity {
     private List<Account> accounts = new ArrayList<>();
 
     //Member 생성 메서드
-    public static Member createMember(MemberDTO memberDTO){
+    public static Member createMember(RegisterDTO registerDTO, String pw){
         Member member = new Member();
-        member.loginId = memberDTO.getId();
-        member.password = memberDTO.getPassword();
-        member.name = memberDTO.getName();
-        member.age = memberDTO.getAge();
-        member.email = memberDTO.getEmail();
+        member.loginId = registerDTO.getId();
+        member.password = pw;
+        member.name = registerDTO.getName();
+        member.age = registerDTO.getAge();
+        member.email = registerDTO.getEmail();
         member.grade = Grade.VIP;
         return member;
+    }
+
+    //연관관계 메소드
+    public void addAccount(Account account){
+        accounts.add(account);
+    }
+
+    public void addSaving(Saving saving) {
+        savings.add(saving);
+    }
+
+    public Member(String loginId, String password, String name, int age, String email, Grade grade) {
+        this.loginId = loginId;
+        this.password = password;
+        this.name = name;
+        this.age = age;
+        this.email = email;
+        this.grade = grade;
     }
 }

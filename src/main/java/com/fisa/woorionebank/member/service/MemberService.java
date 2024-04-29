@@ -1,63 +1,59 @@
 package com.fisa.woorionebank.member.service;
 
-import com.fisa.woorionebank.member.domain.dto.MemberDTO;
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
+import com.fisa.woorionebank.member.domain.dto.request.LoginDto;
+import com.fisa.woorionebank.member.domain.dto.request.RegisterDTO;
+import com.fisa.woorionebank.member.domain.dto.response.MemberDTO;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.modelmapper.ModelMapper;
+
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final ModelMapper mapper = new ModelMapper();
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
-    public MemberDTO createMember(MemberDTO memberDTO){
-        Member member = Member.createMember(memberDTO);
+    public MemberDTO createMember(RegisterDTO registerDTO) {
 
-        Member save = memberRepository.save(member);
-        MemberDTO dto = mapper.map(save, MemberDTO.class);
-        return dto;
-    }
-
-
-    public Member create(final Member member) {
-        if (member == null || member.getLoginId() == null || member.getEmail() == null) {
-            throw new RuntimeException("Invalid arguments");
+        if (memberRepository.existsByLoginId(registerDTO.getId())) {
+            throw new CustomException(ErrorCode.DUPLICATE_MEMBER);
         }
 
-        final String loginId = member.getLoginId();
-        final String email = member.getEmail();
-
-        if (memberRepository.existsByLoginId(loginId)) {
-            log.warn("UserId already exists {}", loginId);
-            throw new RuntimeException("이미 존재하는 아이디입니다.");
+        if (memberRepository.existsByEmail(registerDTO.getEmail())) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        if (memberRepository.existsByEmail(email)) {
-            log.warn("Email already exists {}", email);
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+        Member member = Member.createMember(registerDTO, passwordEncoder.encode(registerDTO.getPassword()));
+
+        Member savedMember = memberRepository.save(member);
+
+
+        return MemberDTO.fromEntity(savedMember);
+    }
+
+    @Transactional
+    public MemberDTO login(LoginDto loginDto) {
+
+        Member member = memberRepository.findByLoginId(loginDto.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_Member_Login));
+
+        if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_Member_Password);
         }
 
-        return memberRepository.save(member);
-    }
+        return MemberDTO.fromEntity(member);
 
-    public Member getByCredentials(final String loginId, final String password, final PasswordEncoder encoder) {
-        final Member originalUser = memberRepository.findByLoginId(loginId);
-
-        if (originalUser != null && encoder.matches(password, originalUser.getPassword())) return originalUser;
-
-        return null;
-    }
-
-    public Boolean checkUserId(String loginId) {
-        return !memberRepository.existsByLoginId(loginId);
     }
 }
