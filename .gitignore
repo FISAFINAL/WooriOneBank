@@ -273,6 +273,9 @@ gradle-app.setting
 # yml 파일 추가
 *.yml
 
+# properties 파일 추가
+*.properties
+
 # queryDsl ignore 추가
 **/generated
 /src/main/generated/
