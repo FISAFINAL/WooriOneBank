@@ -10,7 +10,6 @@
 
     <property name="LOGSTASH_URL" value="127.0.0.1:5000"/>
 
-
     <!-- 콘솔로그 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -18,7 +17,7 @@
         </encoder>
         <!-- 콘솔로그의 레벨을 INFO로 설정 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>INFO</level>
+            <level>DEBUG</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
@@ -68,7 +67,7 @@
 
 
     <!--에러 레벨 이상 제어-->
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="LOGSTASH" />
         <appender-ref ref="FILE"/>
