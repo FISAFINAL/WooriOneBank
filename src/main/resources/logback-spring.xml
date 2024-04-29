@@ -67,7 +67,7 @@
 
 
     <!--에러 레벨 이상 제어-->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="LOGSTASH" />
         <appender-ref ref="FILE"/>
