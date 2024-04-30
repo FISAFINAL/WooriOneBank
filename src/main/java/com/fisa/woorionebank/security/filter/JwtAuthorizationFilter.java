@@ -47,12 +47,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
                     Authentication authentication = tokenProvider.authenticateToken(loginId);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    filterChain.doFilter(request, response);
+//                    filterChain.doFilter(request, response);
                 }
             }
         }
         catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
+            throw new ServletException("Could not set user authentication",ex);
         }
         filterChain.doFilter(request, response);
     }
