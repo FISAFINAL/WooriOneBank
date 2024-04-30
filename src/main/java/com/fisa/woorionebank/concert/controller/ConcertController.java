@@ -36,9 +36,9 @@ public class ConcertController {
      * 우리 원 더 스테이지 응모
      * */
     @Operation(summary = "공연 응모", description = "3/1 ~ 4/30(공연 응모 기간) 공연 상세 정보 화면에서 공연을 응모합니다.")
-    @PostMapping("/apply")
-    public ResponseEntity<ConcertApplyDTO> applyConcert(@AuthenticationPrincipal Member member, @RequestBody RequestDrawDTO requestDrawDTO) {
-        return ResponseEntity.ok().body(concertService.applyConcert(member, requestDrawDTO.getConcertId()));
+    @GetMapping("/apply")
+    public ResponseEntity<ConcertApplyDTO> applyConcert(@AuthenticationPrincipal Member member, @RequestParam Long concertId) {
+        return ResponseEntity.ok().body(concertService.applyConcert(member, concertId));
     }
 
     /**
