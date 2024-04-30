@@ -131,9 +131,7 @@ public class ConcertService {
             concertHistoryRepository.save(concertHistory);
 
             return ConcertReserveDTO.fromEntity(concertHistory);
-        }
-
-        throw new CustomException(ErrorCode.ALREADY_RESERVED_SEAT);
+        } else throw new CustomException(ErrorCode.ALREADY_RESERVED_SEAT);
     }
 
     /**
