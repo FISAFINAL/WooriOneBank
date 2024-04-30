@@ -5,6 +5,7 @@ import com.fisa.woorionebank.concert.repository.querydsl.ConcertRepositoryCustom
 import com.fisa.woorionebank.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,9 @@ public interface ConcertRepository extends JpaRepository<Concert, Long>, Concert
     @Query("select m from ConcertHistory c join Member m on m.memberId = c.member.memberId where c.concert.concertId = :#{#concertId}")
     List<Member> findMemberByConcertId(Long concertId);
 
-    @Query("select c.concertVenue.concertVenueId from Concert c where c.concertVenue.concertVenueId = :#{#concertId}")
-    Optional<Long> findConcertVenueByConcertId(Long concertId);
+//    @Query("select c.concertVenue.concertVenueId from Concert c where c.concertVenue.concertVenueId = :#{#concertId}")
+//    Optional<Long> findConcertVenueByConcertId(Long concertId);
+    @Query("select c.concertVenue.concertVenueId from Concert c where c.concertVenue.concertVenueId = :concertId")
+    Optional<Long> findConcertVenueByConcertId(@Param("concertId") Long concertId);
+
 }
