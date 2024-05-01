@@ -37,6 +37,7 @@ public class SavingController {
     @GetMapping("/{memberId}")
     public ResponseEntity<SavingListDTO> findSavings(@PathVariable("memberId") Long memberId) {
         log.info("적금 조회 호출");
+        
         return ResponseEntity.ok(savingService.findSavings(memberId));
     }
     @Operation(summary = "최애적금 조회", description = "회원이 생성한 최애적금 리스트를 조회합니다.")
