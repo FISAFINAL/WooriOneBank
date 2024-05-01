@@ -17,6 +17,7 @@ import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.response.SeatListDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
 import com.fisa.woorionebank.seat.repository.SeatRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 public class ConcertService {
     private final ConcertRepository concertRepository;
@@ -43,7 +45,12 @@ public class ConcertService {
 
         PeriodType period = ConcertUtils.calculatePeriod(concert);
 
-        return ResponseConcertDTO.fromEntity(concert, period);
+
+        ResponseConcertDTO responseConcertDTO = ResponseConcertDTO.fromEntity(concert, period);
+
+        log.info("공연 조회");
+
+        return responseConcertDTO;
     }
 
     @Transactional
