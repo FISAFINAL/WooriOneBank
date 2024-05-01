@@ -60,9 +60,10 @@ public class DistributedLockTest {
     @Rollback(value = false)
     public void 테스트데이터삽입() throws Exception {
 
-        ConcertVenue concertVenue = ConcertVenue.of("킨텍스", "일산", 1_000);
+//        ConcertVenue concertVenue = ConcertVenue.of("킨텍스", "일산", 1_000);
+        ConcertVenue concertVenue = ConcertVenue.of("킨텍스", "일산", 1);
         em.persist(concertVenue);
-        Seat seat = Seat.of(SeatClass.A, "10열 11", 10, 11, concertVenue);
+        Seat seat = Seat.of(SeatClass.A, "1열 1", 1, 1, concertVenue);
         em.persist(seat);
         Concert concert = Concert.of("2024 우리 원 더 스테이지", LocalDateTime.parse("2024-03-01T00:00:00"),
                 LocalDateTime.parse("2024-04-30T23:59:59").withNano(999999),
@@ -78,10 +79,7 @@ public class DistributedLockTest {
             em.persist(member);
             ConcertHistory concertHistory = ConcertHistory.of(Status.APPLY, null, null, member, null, concert);
             em.persist(concertHistory);
-
         }
-
-
     }
 
 
@@ -90,7 +88,7 @@ public class DistributedLockTest {
     public void 티켓팅_100명_LockX() throws Exception{
 
         List<Member> memberList = memberRepository.findAll();
-        Seat seat = seatRepository.findSeat(10, 11)
+        Seat seat = seatRepository.findSeat(1, 1)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Seat));
         Concert concert = concertRepository.findById(1L)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
@@ -98,7 +96,7 @@ public class DistributedLockTest {
         System.out.println(memberList.size());
         System.out.println(seat.getSeatNumber());
 
-        RequestSeatDTO dto = new RequestSeatDTO(concert.getConcertId(),10,11);
+        RequestSeatDTO dto = new RequestSeatDTO(concert.getConcertId(),1,1);
 
         int numberOfThreads = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -121,6 +119,8 @@ public class DistributedLockTest {
         }
 
         latch.await();
+        em.flush();
+        em.clear();
 
         List<ConcertHistory> bySeat = concertHistoryRepository.findBySeat2(seat.getSeatId());
 
@@ -132,7 +132,7 @@ public class DistributedLockTest {
     public void 티켓팅_100명_분산Lock() throws Exception{
 
         List<Member> memberList = memberRepository.findAll();
-        Seat seat = seatRepository.findSeat(10, 11)
+        Seat seat = seatRepository.findSeat(1, 1)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Seat));
         Concert concert = concertRepository.findById(1L)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Concert));
@@ -140,7 +140,7 @@ public class DistributedLockTest {
         System.out.println(memberList.size());
         System.out.println(seat.getSeatNumber());
 
-        RequestSeatDTO dto = new RequestSeatDTO(concert.getConcertId(),10,11);
+        RequestSeatDTO dto = new RequestSeatDTO(concert.getConcertId(),1,1);
 
         int numberOfThreads = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -165,6 +165,7 @@ public class DistributedLockTest {
         latch.await();
 
         System.out.println(seat.getSeatId() + " Seat ID @@@@@");
+
         List<ConcertHistory> bySeat = concertHistoryRepository.findBySuccess(Status.SUCCESS);
 
         assertThat(bySeat.size()).isEqualTo(1);

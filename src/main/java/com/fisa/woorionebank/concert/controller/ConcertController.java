@@ -87,14 +87,14 @@ public class ConcertController {
         return ResponseEntity.ok().body(concertService.reserveSeat(member, requestSeatDTO));
     }
 
-//    /**
-//     * 좌석 예매 (분산락)
-//     * */
-//    @Operation(summary = "좌석 예매", description = "5/2 19시 이후(공연 예매 기간) 좌석을 예매합니다.")
-//    @PostMapping("/reservation")
-//    public ResponseEntity<ConcertReserveDTO> reserveSeat2(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
-//        return ResponseEntity.ok().body(concertService.reserveSeat2(member, requestSeatDTO));
-//    }
+    /**
+     * 좌석 예매 (분산락)
+     * */
+    @Operation(summary = "좌석 예매", description = "5/2 19시 이후(공연 예매 기간) 좌석을 예매합니다.")
+    @PostMapping("/reservation2")
+    public ResponseEntity<ConcertReserveDTO> reserveSeat2(@AuthenticationPrincipal Member member, @RequestBody RequestSeatDTO requestSeatDTO) {
+        return ResponseEntity.ok().body(concertService.reserveSeat2("reservation",member, requestSeatDTO));
+    }
 
     /**
      * 우리 원 더 스테이지 좌석 예매 결과 조회
