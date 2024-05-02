@@ -74,6 +74,12 @@ public class DummyService {
         this.seatRepository = seatRepository;
     }
 
+    @EventListener(ApplicationReadyEvent.class)
+    @Transactional
+    public void initDB(){
+        initData();
+    }
+
     public void initData() {
         Member member1 = new Member("ID1", "PW1", "memeber1", 20, "email1", Grade.VVIP);
         Member member2 = new Member("ID2", "PW2", "memeber2", 21, "email2", Grade.VIP);
