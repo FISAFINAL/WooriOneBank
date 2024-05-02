@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DummyController {
     private final DummyService dummyService;
 
-    @GetMapping("/dummy")
+    @GetMapping("")
     public void test() {
         dummyService.initData();
     }

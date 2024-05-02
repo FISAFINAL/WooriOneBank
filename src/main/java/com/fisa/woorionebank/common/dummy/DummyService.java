@@ -2,13 +2,14 @@ package com.fisa.woorionebank.common.dummy;
 
 import com.fisa.woorionebank.account.entity.Account;
 import com.fisa.woorionebank.account.repository.AccountRepository;
-import com.fisa.woorionebank.concert.domain.entity.Concert;
-import com.fisa.woorionebank.concert.domain.entity.ConcertHistory;
-import com.fisa.woorionebank.concert.domain.entity.ConcertVenue;
-import com.fisa.woorionebank.concert.domain.entity.Status;
+import com.fisa.woorionebank.common.execption.CustomException;
+import com.fisa.woorionebank.common.execption.ErrorCode;
+import com.fisa.woorionebank.concert.domain.dto.response.ResponseConcertDTO;
+import com.fisa.woorionebank.concert.domain.entity.*;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertHistoryRepository;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertRepository;
 import com.fisa.woorionebank.concert.repository.jpa.ConcertVenueRepository;
+import com.fisa.woorionebank.concert.util.ConcertUtils;
 import com.fisa.woorionebank.member.entity.Grade;
 import com.fisa.woorionebank.member.entity.Member;
 import com.fisa.woorionebank.member.repository.MemberRepository;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -36,8 +38,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
+@Service
 public class DummyService {
 
     private final MemberRepository memberRepository;
@@ -60,14 +61,20 @@ public class DummyService {
 
     private final SeatRepository seatRepository;
 
-    @EventListener(ApplicationReadyEvent.class)
-    @Transactional
-    public void initDB(){
-        initData();
+    public DummyService(MemberRepository memberRepository, AccountRepository accountRepository, CelebrityRepository celebrityRepository, SavingRepository savingRepository, SavingRuleRepository savingRuleRepository, SavingHistoryRepository savingHistoryRepository, ConcertRepository concertRepository, ConcertVenueRepository concertVenueRepository, ConcertHistoryRepository concertHistoryRepository, SeatRepository seatRepository) {
+        this.memberRepository = memberRepository;
+        this.accountRepository = accountRepository;
+        this.celebrityRepository = celebrityRepository;
+        this.savingRepository = savingRepository;
+        this.savingRuleRepository = savingRuleRepository;
+        this.savingHistoryRepository = savingHistoryRepository;
+        this.concertRepository = concertRepository;
+        this.concertVenueRepository = concertVenueRepository;
+        this.concertHistoryRepository = concertHistoryRepository;
+        this.seatRepository = seatRepository;
     }
 
     public void initData() {
-
         Member member1 = new Member("ID1", "PW1", "memeber1", 20, "email1", Grade.VVIP);
         Member member2 = new Member("ID2", "PW2", "memeber2", 21, "email2", Grade.VIP);
         Member member3 = new Member("ID3", "PW3", "memeber3", 22, "email3", Grade.PLATINUM);
@@ -219,4 +226,5 @@ public class DummyService {
         concertHistoryRepository.save(concertHistory4);
         concertHistoryRepository.save(concertHistory5);
     }
+
 }
