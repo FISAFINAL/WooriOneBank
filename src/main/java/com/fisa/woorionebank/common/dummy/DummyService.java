@@ -74,11 +74,11 @@ public class DummyService {
         this.seatRepository = seatRepository;
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    @Transactional
-    public void initDB(){
-        initData();
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    @Transactional
+//    public void initDB(){
+//        initData();
+//    }
 
     public void initData() {
         Member member1 = new Member("ID1", "PW1", "memeber1", 20, "email1", Grade.VVIP);
