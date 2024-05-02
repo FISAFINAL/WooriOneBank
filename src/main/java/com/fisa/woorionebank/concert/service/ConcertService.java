@@ -17,6 +17,7 @@ import com.fisa.woorionebank.seat.domain.dto.ResponseSeatDTO;
 import com.fisa.woorionebank.seat.domain.dto.response.SeatListDTO;
 import com.fisa.woorionebank.seat.entity.Seat;
 import com.fisa.woorionebank.seat.repository.SeatRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class ConcertService {
     private final ConcertRepository concertRepository;
     private final ConcertHistoryRepository concertHistoryRepository;
@@ -80,7 +82,9 @@ public class ConcertService {
         final ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), concertId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ConcertHistory));
 
-        if(concertHistory.getStatus() == Status.WIN) return new ReserveAvailableDTO(true);
+        if(concertHistory.getStatus() == Status.WIN) {
+            return new ReserveAvailableDTO(true);
+        }
         else if(concertHistory.getStatus() == Status.SUCCESS) throw new CustomException(ErrorCode.ALREADY_BOOKED_CONCERT);
         else throw new CustomException(ErrorCode.NOT_WIN_Member);
     }
@@ -120,15 +124,21 @@ public class ConcertService {
         Seat seat = seatRepository.findSeatIdBySeatXAndSeatY(seatDTO.getSeatX(), seatDTO.getSeatY())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_Seat));
 
+        log.info("seat : {}", seat.toString());
+
         // 이미 선택된 좌석 확인 , 선택되지 않았으면 seat가 null
         Optional<ConcertHistory> c = concertHistoryRepository.findBySeatIdAndConcertId(seat.getSeatId(), seatDTO.getConcertId());
+        log.info("ConcertHistory : {}", c.toString());
 
         if(!c.isPresent()) {
             ConcertHistory concertHistory = concertHistoryRepository.findByMemberIdAndConcertId(member.getMemberId(), seatDTO.getConcertId())
                     .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TICKETING));
+            log.info("concertHistory : {}", concertHistory.toString());
 
             concertHistory.reserve(seat);
-            concertHistoryRepository.save(concertHistory);
+            log.info("concertHistory : {}", concertHistory.toString());
+            ConcertHistory result = concertHistoryRepository.save(concertHistory);
+            log.info("concertHistory Result : {}", result.toString());
 
             return ConcertReserveDTO.fromEntity(concertHistory);
         } else throw new CustomException(ErrorCode.ALREADY_RESERVED_SEAT);
