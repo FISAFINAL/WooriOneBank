@@ -58,15 +58,15 @@ dependencies {
 //	implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
 
 	// 엘라스틱
-	implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
-	// Logback Classic 모듈
-	implementation 'ch.qos.logback:logback-classic:1.2.6'
-	// Logstash Logback Encoder 모듈
-	implementation 'net.logstash.logback:logstash-logback-encoder:6.6'
-
-	// actuator, prometheus
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+//	implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+//	// Logback Classic 모듈
+//	implementation 'ch.qos.logback:logback-classic:1.2.6'
+//	// Logstash Logback Encoder 모듈
+//	implementation 'net.logstash.logback:logstash-logback-encoder:6.6'
+//
+//	// actuator, prometheus
+//	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
 }
 
