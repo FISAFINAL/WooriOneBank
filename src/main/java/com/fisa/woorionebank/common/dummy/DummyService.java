@@ -220,13 +220,11 @@ public class DummyService {
             seatRepository.save(seat);
         }
 
-        ConcertHistory concertHistory1 = ConcertHistory.of(Status.APPLY, null, null, member2, null, concert1);
         ConcertHistory concertHistory2 = ConcertHistory.of(Status.APPLY, null, null, member2, null, concert1);
         ConcertHistory concertHistory3 = ConcertHistory.of(Status.APPLY, null, null, member3, null, concert1);
         ConcertHistory concertHistory4 = ConcertHistory.of(Status.APPLY, null, null, member4, null, concert1);
         ConcertHistory concertHistory5 = ConcertHistory.of(Status.APPLY, null, null, member5, null, concert1);
 
-        concertHistoryRepository.save(concertHistory1);
         concertHistoryRepository.save(concertHistory2);
         concertHistoryRepository.save(concertHistory3);
         concertHistoryRepository.save(concertHistory4);
