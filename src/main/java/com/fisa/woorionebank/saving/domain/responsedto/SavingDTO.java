@@ -26,6 +26,7 @@ public class SavingDTO {
     private BigDecimal totalAmount; // 총 적금 금액
     private String celebrityName; // 연예인 이름
     private String celebrityUrl; // 연예인 사진
+    private String savingAccount; // 계좌번호
 
     // Saving -> SavingDTO
     public static SavingDTO fromEntity(Saving saving) {
@@ -36,6 +37,7 @@ public class SavingDTO {
                 .totalAmount(saving.getTotalAmount())
                 .celebrityName(saving.getCelebrity().getCelebrityName())
                 .celebrityUrl(saving.getCelebrity().getCelebrityUrl())
+                .savingAccount(saving.getSavingAccount())
                 .build();
     }
 
