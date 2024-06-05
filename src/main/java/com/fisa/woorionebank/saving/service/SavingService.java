@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class SavingService {
+
+    //test
     private final SavingRepository savingRepository;
     private final MemberRepository memberRepository;
     private final CelebrityRepository celebrityRepository;
